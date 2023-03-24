@@ -14,6 +14,7 @@ namespace Gameplay
         [Space(10f), SerializeField] private CameraController _cameraController;
 
         private GameProcess _gameProcess;
+        private bool _isRunning;
 
         
         private void OnValidate()
@@ -36,12 +37,31 @@ namespace Gameplay
                 _cameraController
             );
 
+            _gameProcess.GameCompletedEvent += OnGameCompleted;
             _gameProcess.StartProcess();
+            _isRunning = true;
         }
 
+        
+        private void OnGameCompleted()
+        {
+            _gameProcess.GameCompletedEvent -= OnGameCompleted;
+            _gameProcess.StopProcess();
+            _isRunning = false;
+        }
+
+        
         private void Update()
         {
+            if (!_isRunning) return;
             _gameProcess?.OnUpdate();
+        }
+        
+        
+        private void FixedUpdate()
+        {
+            if (!_isRunning) return;
+            _gameProcess?.OnFixedUpdate();
         }
     }
 }

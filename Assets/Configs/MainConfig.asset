@@ -18,5 +18,7 @@ MonoBehaviour:
     type: 2}
   <Factory>k__BackingField: {fileID: 11400000, guid: 9d88239a79b9c65678f3f7d6e20862ee,
     type: 2}
+  <Hero>k__BackingField: {fileID: 11400000, guid: 01157f6b6dd84c41798df7660a451e36,
+    type: 2}
   <Camera>k__BackingField: {fileID: 11400000, guid: cc8da907833fe9fd7b76a303baec96f0,
     type: 2}

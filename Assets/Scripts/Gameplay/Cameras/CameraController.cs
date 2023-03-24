@@ -12,7 +12,7 @@ namespace Gameplay.Cameras
     {
         public enum CameraType
         {
-            STURTUP,
+            STARTUP,
             GAMEPLAY
         }
 
@@ -43,7 +43,7 @@ namespace Gameplay.Cameras
             ActiveCameraByType(type);
 
             StopOverviewMap();
-            if (type == CameraType.STURTUP) StartCircularOverviewMap();
+            if (type == CameraType.STARTUP) StartCircularOverviewMap();
         }
 
         private void StopOverviewMap()
@@ -77,7 +77,7 @@ namespace Gameplay.Cameras
 
         private void ActiveCameraByType(CameraType type)
         {
-            _startupVC.Priority = (type == CameraType.STURTUP) ? 10 : 0;
+            _startupVC.Priority = (type == CameraType.STARTUP) ? 10 : 0;
             _gameplayVC.Priority = (type == CameraType.GAMEPLAY) ? 10 : 0;
         }
     }
