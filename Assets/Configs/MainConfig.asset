@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 679c88c3e2cbdb90890e6df2eaede57c, type: 3}
+  m_Name: MainConfig
+  m_EditorClassIdentifier: 
+  <Player>k__BackingField: {fileID: 11400000, guid: 1ef334fe8630b367980c56972f9380a1,
+    type: 2}
+  <Enemy>k__BackingField: {fileID: 11400000, guid: 39baa9f8dcca6d48d88c9bfc8c3e1203,
+    type: 2}
+  <Factory>k__BackingField: {fileID: 11400000, guid: 9d88239a79b9c65678f3f7d6e20862ee,
+    type: 2}
+  <Camera>k__BackingField: {fileID: 11400000, guid: cc8da907833fe9fd7b76a303baec96f0,
+    type: 2}
