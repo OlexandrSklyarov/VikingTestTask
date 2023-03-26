@@ -15,7 +15,7 @@ MonoBehaviour:
   <StartHealth>k__BackingField: 20
   <Engine>k__BackingField:
     <Speed>k__BackingField: 80
-    <AngularSpeed>k__BackingField: 850
+    <AngularSpeed>k__BackingField: 600
     <SmoothMovementTime>k__BackingField: 0.5
   <Camera>k__BackingField:
     <LookDeltaThreshold>k__BackingField: 0.01

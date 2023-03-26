@@ -81,7 +81,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!136 &464798304095520353
 CapsuleCollider:
@@ -206,6 +206,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2024696311291042997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8369288173522468263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1850ba097592de115add20ab7d7bce69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &9182417345184753437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9ba98bd625e481c43b79ef8427b708b4,
