@@ -9,10 +9,18 @@ namespace Gameplay.Player.FSM.States
         
         public override void OnStart()
         {
+            StartBattle();
         }
+
 
         public override void OnStop()
         {
+        }
+        
+        
+        private void StartBattle()
+        {
+            _context.SwitchState<BattleState>();
         }
     }
 }

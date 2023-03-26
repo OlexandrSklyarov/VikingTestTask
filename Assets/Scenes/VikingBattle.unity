@@ -828,7 +828,7 @@ MonoBehaviour:
   ShoulderOffset: {x: 0.5, y: -0.4, z: 0}
   VerticalArmLength: 0.4
   CameraSide: 1
-  CameraDistance: 2
+  CameraDistance: 3.5
   CameraCollisionFilter:
     serializedVersion: 2
     m_Bits: 0
@@ -1111,7 +1111,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044130059}
   m_LocalRotation: {x: 0.24559087, y: -0.49260917, z: 0.14721447, w: 0.82179636}
-  m_LocalPosition: {x: 8.7, y: 19.9, z: 41.07}
+  m_LocalPosition: {x: 8.7, y: 19.9, z: 39.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

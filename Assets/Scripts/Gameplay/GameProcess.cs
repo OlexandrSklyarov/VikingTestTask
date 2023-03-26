@@ -31,15 +31,15 @@ namespace Gameplay
             _playerController = new PlayerController
             (
                 _config.Player,
-                SpawnHero(playerSpawnPoint),
-                _inputAdaptor
+                SpawnHero(playerSpawnPoint, _inputAdaptor),
+                cameraController
             );
 
             _playerController.LossEvent += OnHeroLoss;
         }
 
        
-        private HeroController SpawnHero(Transform spawnPoint)
+        private HeroController SpawnHero(Transform spawnPoint, InputAdaptor inputAdaptor)
         {
             var hero = UnityEngine.Object.Instantiate
             (
@@ -48,7 +48,7 @@ namespace Gameplay
                 spawnPoint.rotation
             );
             
-            hero.Init(_config.Hero.Engine, _config.Hero.StartHealth);
+            hero.Init(_config.Hero.Engine, inputAdaptor, _config.Hero.StartHealth);
 
             return hero;
         }
@@ -69,12 +69,14 @@ namespace Gameplay
         public void StartProcess()
         {
             _cameraController.ActiveCamera(CameraController.CameraType.STARTUP);
+            _inputAdaptor.Enable();
             _playerController?.Enable();
         }
         
         
         public void StopProcess()
         {
+            _inputAdaptor.Disable();
             _playerController?.Disable();
         }
         

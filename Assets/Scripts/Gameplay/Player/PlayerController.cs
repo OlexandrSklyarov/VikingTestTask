@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Input;
 using Data;
+using Gameplay.Cameras;
 using Gameplay.Characters.Hero;
 using Gameplay.Player.FSM;
 using Gameplay.Player.FSM.States;
@@ -11,22 +12,24 @@ namespace Gameplay.Player
 {
     public class PlayerController : IPlayer, IPlayerContextSwitcher
     {
+        IHero IPlayer.Hero => _hero;
+        ICameraController IPlayer.CameraController => _cameraController;
+
         private readonly PlayerData _config;
         private readonly HeroController _hero;
-        private readonly InputAdaptor _input;
-        
-        private List<BasePlayerState> _allStates;
+        private readonly ICameraController _cameraController;
+        private readonly List<BasePlayerState> _allStates;
         private BasePlayerState _currentState;
         private bool _isActive;
 
         public event Action LossEvent;
 
 
-        public PlayerController(PlayerData config, HeroController hero, InputAdaptor input)
+        public PlayerController(PlayerData config, HeroController hero, ICameraController cameraController)
         {
             _config = config;
             _hero = hero;
-            _input = input;
+            _cameraController = cameraController;
             
             _allStates =  new List<BasePlayerState>()
             {
@@ -81,8 +84,8 @@ namespace Gameplay.Player
             
             _currentState?.OnFixedUpdate();
         }
-
         
+
         void IPlayer.Loss() => LossEvent?.Invoke();
     }
 }

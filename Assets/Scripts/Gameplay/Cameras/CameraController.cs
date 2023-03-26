@@ -34,7 +34,7 @@ namespace Gameplay.Cameras
             _startupCameraRoot.transform.position = _startupVC.transform.position;
             
             _startupVC.transform.SetParent(_startupCameraRoot);
-            _startupVC.m_LookAt = _startupCameraLookTarget;
+            _startupVC.LookAt = _startupCameraLookTarget;
         }
 
         
@@ -45,6 +45,13 @@ namespace Gameplay.Cameras
             StopOverviewMap();
             if (type == CameraType.STARTUP) StartCircularOverviewMap();
         }
+
+        
+        public void SetGameplayTarget(Transform followTarget)
+        {
+            _gameplayVC.Follow = followTarget;
+        }
+        
 
         private void StopOverviewMap()
         {

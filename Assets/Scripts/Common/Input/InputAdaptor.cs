@@ -13,6 +13,7 @@ namespace Common.Input
         private bool _isEnabled;
 
         public event Action<Vector2> OnMovement;
+        public event Action<Vector2> OnLook;
         public event Action OnAttack;
         
 
@@ -45,17 +46,31 @@ namespace Common.Input
             _inputAction.Enable();
 
             _inputAction.Gameplay.Movement.performed += OnMovementHandler;
+            _inputAction.Gameplay.Movement.canceled += OnMovementHandler;
+            _inputAction.Gameplay.Look.performed += OnLookHandler;
+            _inputAction.Gameplay.Attack.started += OnAttackHandler;
 
             _isEnabled = true;
         }
 
-        
+       
         public void Disable()
         {
             if (!_isEnabled) return;
             
+            _inputAction.Gameplay.Movement.performed -= OnMovementHandler;
+            _inputAction.Gameplay.Movement.canceled -= OnMovementHandler;
+            _inputAction.Gameplay.Look.performed -= OnLookHandler;
+            _inputAction.Gameplay.Attack.started -= OnAttackHandler;
+
             _inputAction.Disable();
             _isEnabled = false;
+        }
+        
+        
+        private void OnAttackHandler(InputAction.CallbackContext ctx)
+        {
+            OnAttack?.Invoke();
         }
         
         
@@ -64,6 +79,10 @@ namespace Common.Input
             OnMovement?.Invoke(ctx.ReadValue<Vector2>());
         }
 
-
+        
+        private void OnLookHandler(InputAction.CallbackContext ctx)
+        {
+            OnLook?.Invoke(ctx.ReadValue<Vector2>());
+        }
     }
 }
