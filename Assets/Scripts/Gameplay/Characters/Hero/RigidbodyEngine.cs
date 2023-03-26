@@ -24,6 +24,8 @@ namespace Gameplay.Characters.Hero
             _mainCamera = Camera.main.transform;
         }
 
+        public float CurrentSpeed => (_moveDirection.sqrMagnitude > 0.01f) ? 1f : 0f;
+
 
         public void SetDirection(Vector2 inputDir)
         {

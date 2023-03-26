@@ -1,6 +1,7 @@
 using System;
 using Common.Input;
 using Data;
+using Gameplay.Characters.Animations;
 using UnityEngine;
 
 namespace Gameplay.Characters.Hero
@@ -17,6 +18,7 @@ namespace Gameplay.Characters.Hero
         private RigidbodyEngine _engine;
         private CameraLookRotateProvider _cameraLookProvider;
         private InputAdaptor _inputAdaptor;
+        private AnimatorProvider _animatorProvider;
 
         public event Action DieEvent;
         
@@ -41,9 +43,19 @@ namespace Gameplay.Characters.Hero
             _inputAdaptor.OnMovement += OnMovementHandler;
             _inputAdaptor.OnLook += OnLookHandler;
             _inputAdaptor.OnAttack += OnAttackHandler;
+
+            _animatorProvider = GetComponentInChildren<AnimatorProvider>();
+            _animatorProvider.Init();
+            _animatorProvider.AttackEvent += OnAttackExecute;
         }
 
         
+        private void OnAttackExecute()
+        {
+            Debug.Log("Check hit");
+        }
+
+
         private void OnLookHandler(Vector2 dir)
         {
             _cameraLookProvider?.SetLookRotation(dir, _inputAdaptor.IsCurrentDeviceMouse);
@@ -59,6 +71,8 @@ namespace Gameplay.Characters.Hero
         private void OnAttackHandler()
         {
             Debug.Log("Attack");
+            _animatorProvider.PlayAttack();
+            _engine?.SetDirection(Vector2.zero);
         }
         
 
@@ -90,6 +104,7 @@ namespace Gameplay.Characters.Hero
         void IHero.OnUpdate()
         {
             _engine?.OnUpdate();
+            _animatorProvider.SetSpeed(_engine.CurrentSpeed);
         }
     }
 }
