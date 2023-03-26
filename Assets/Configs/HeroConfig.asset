@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cba160580157496b948fa1b5cececbfd, type: 3}
   m_Name: HeroConfig
   m_EditorClassIdentifier: 
-  <HeroPrefab>k__BackingField: {fileID: 2550848022988170726, guid: 14678446c2f0ba26b88a80f877711943,
-    type: 3}
   <StartHealth>k__BackingField: 20
   <Engine>k__BackingField:
-    <Speed>k__BackingField: 5
-    <AngularSpeed>k__BackingField: 360
+    <Speed>k__BackingField: 80
+    <AngularSpeed>k__BackingField: 850
+    <SmoothMovementTime>k__BackingField: 0.5
+  <Camera>k__BackingField:
+    <LookDeltaThreshold>k__BackingField: 0.01
+    <BottomClamp>k__BackingField: -30
+    <TopClamp>k__BackingField: 70
+    <AngleOverride>k__BackingField: 0

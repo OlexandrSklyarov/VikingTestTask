@@ -43,12 +43,12 @@ namespace Gameplay
         {
             var hero = UnityEngine.Object.Instantiate
             (
-                _config.Hero.HeroPrefab,
+                _config.HeroPrefab,
                 spawnPoint.position,
                 spawnPoint.rotation
             );
             
-            hero.Init(_config.Hero.Engine, inputAdaptor, _config.Hero.StartHealth);
+            hero.Init(_config.Hero, inputAdaptor);
 
             return hero;
         }
@@ -63,6 +63,12 @@ namespace Gameplay
         public void OnFixedUpdate()
         {
             _playerController?.OnFixedUpdate();
+        }
+        
+        
+        public void OnLateUpdate()
+        {
+            _playerController?.OnLateUpdate();
         }
         
 

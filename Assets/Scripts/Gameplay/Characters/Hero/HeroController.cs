@@ -15,32 +15,38 @@ namespace Gameplay.Characters.Hero
         
         private Health _health;
         private RigidbodyEngine _engine;
-        
+        private CameraLookRotateProvider _cameraLookProvider;
+        private InputAdaptor _inputAdaptor;
+
         public event Action DieEvent;
         
 
-        public void Init(HeroEngine engineConfig, InputAdaptor inputAdaptor, int startHealth)
+        public void Init(HeroData config, InputAdaptor inputAdaptor)
         {
-            _health = new Health(startHealth);
+            _inputAdaptor = inputAdaptor;
+            
+            _health = new Health(config.StartHealth);
             _health.ChangeHealthEvent += OnHealthChange;
             _health.HealthZeroEvent += OnHealthIsOver;
 
             _engine = new RigidbodyEngine
             (
-                engineConfig,
-                _viewBody,
-                GetComponent<Rigidbody>()
+                config.Engine,
+                GetComponent<Rigidbody>(),
+                _viewBody
             );
 
-            inputAdaptor.OnMovement += OnMovementHandler;
-            inputAdaptor.OnLook += OnLookHandler;
-            inputAdaptor.OnAttack += OnAttackHandler;
+            _cameraLookProvider = new CameraLookRotateProvider(config.Camera, _cameraFollowTarget);
+
+            _inputAdaptor.OnMovement += OnMovementHandler;
+            _inputAdaptor.OnLook += OnLookHandler;
+            _inputAdaptor.OnAttack += OnAttackHandler;
         }
 
         
         private void OnLookHandler(Vector2 dir)
         {
-            
+            _cameraLookProvider?.SetLookRotation(dir, _inputAdaptor.IsCurrentDeviceMouse);
         }
 
 
@@ -59,6 +65,7 @@ namespace Gameplay.Characters.Hero
         private void OnHealthIsOver(int hp)
         {
             Debug.Log($"hp is over{hp}");
+            DieEvent?.Invoke();
         }
 
 
@@ -72,7 +79,13 @@ namespace Gameplay.Characters.Hero
         {
             _engine?.OnFixedUpdate();
         }
+
         
+        void IHero.OnLateUpdate()
+        {
+            _cameraLookProvider?.OnUpdate();
+        }
+
 
         void IHero.OnUpdate()
         {

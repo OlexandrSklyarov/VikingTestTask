@@ -9,5 +9,6 @@ namespace Gameplay.Characters.Hero
         Transform CameraFollowTarget { get; }
         public void OnUpdate();
         public void OnFixedUpdate();
+        public void OnLateUpdate();
     }
 }

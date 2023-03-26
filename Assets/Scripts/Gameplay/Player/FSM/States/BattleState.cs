@@ -16,21 +16,16 @@ namespace Gameplay.Player.FSM.States
         }
         
 
-        public override void OnStop()
-        {
-        }
+        public override void OnStop() {}
 
 
-        public override void OnFixedUpdate()
-        {
-            _agent.Hero.OnFixedUpdate();
-        }
+        public override void OnFixedUpdate() => _agent.Hero.OnFixedUpdate();
 
+
+        public override void OnUpdate() => _agent.Hero.OnUpdate();
         
-        public override void OnUpdate()
-        {
-            _agent.Hero.OnUpdate();
-        }
+        
+        public override void OnLateUpdate() => _agent.Hero.OnLateUpdate();
         
 
         private void OnHeroDieHandler()

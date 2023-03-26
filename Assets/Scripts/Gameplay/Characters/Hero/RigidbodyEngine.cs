@@ -12,38 +12,51 @@ namespace Gameplay.Characters.Hero
         private readonly Transform _viewBody;
 
         private Vector3 _moveDirection;
-        private Vector3 _lookDirection;
+        private Vector3 _smoothVelocity;
 
 
-        public RigidbodyEngine(HeroEngine config, Transform viewBody, Rigidbody rb)
+        public RigidbodyEngine(HeroEngine config, Rigidbody rb, Transform viewBody)
         {
             _config = config;
-            _viewBody = viewBody;
             _rb = rb;
+            _viewBody = viewBody;
             _myTransform = _rb.transform;
             _mainCamera = Camera.main.transform;
         }
 
 
-        public void SetDirection(Vector2 dir)
+        public void SetDirection(Vector2 inputDir)
         {
-            _moveDirection = (dir != Vector2.zero) ? new Vector3(dir.x, 0f, dir.y) : Vector3.zero;
+            var dir = (inputDir != Vector2.zero) ? new Vector3(inputDir.x, 0f, inputDir.y) : Vector3.zero;
+            _moveDirection = _mainCamera.TransformDirection(dir);
         }
 
+        
+        public void OnFixedUpdate() => MoveBody();
 
-        public void OnFixedUpdate()
+
+        public void OnUpdate() => RotateBody();
+
+        private void MoveBody()
         {
             var pos = _myTransform.position;
-            _rb.MovePosition(pos + _config.Speed * Time.deltaTime * _moveDirection);
+            var targetPos = pos + _config.Speed * Time.deltaTime * _moveDirection;
+            
+            _rb.MovePosition(Vector3.SmoothDamp
+            (
+                pos,
+                targetPos,
+                ref _smoothVelocity,
+                _config.SmoothMovementTime
+            ));
         }
-
-
-        public void OnUpdate()
+        
+        
+        private void RotateBody()
         {
             if (_moveDirection == Vector3.zero) return;
-            
-            var angle = Mathf.Atan2(_moveDirection.x, _moveDirection.z) * Mathf.Rad2Deg +
-                        _mainCamera.transform.eulerAngles.y;
+
+            var angle = Mathf.Atan2(_moveDirection.x, _moveDirection.z) * Mathf.Rad2Deg;
             
             _viewBody.rotation = Quaternion.RotateTowards
             (

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679c88c3e2cbdb90890e6df2eaede57c, type: 3}
   m_Name: MainConfig
   m_EditorClassIdentifier: 
+  <HeroPrefab>k__BackingField: {fileID: 2550848022988170726, guid: 14678446c2f0ba26b88a80f877711943,
+    type: 3}
   <Player>k__BackingField: {fileID: 11400000, guid: 1ef334fe8630b367980c56972f9380a1,
     type: 2}
   <Enemy>k__BackingField: {fileID: 11400000, guid: 39baa9f8dcca6d48d88c9bfc8c3e1203,

@@ -63,5 +63,12 @@ namespace Gameplay
             if (!_isRunning) return;
             _gameProcess?.OnFixedUpdate();
         }
+        
+        
+        private void LateUpdate()
+        {
+            if (!_isRunning) return;
+            _gameProcess?.OnLateUpdate();
+        }
     }
 }

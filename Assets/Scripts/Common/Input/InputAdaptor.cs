@@ -8,6 +8,8 @@ namespace Common.Input
     {
         public enum ControlMap {GAMPLAY, UI}
         
+        public bool IsCurrentDeviceMouse => Gamepad.current == null ;
+        
         private readonly PlayerInputAction _inputAction;
 
         private bool _isEnabled;
@@ -21,6 +23,7 @@ namespace Common.Input
         {
             _inputAction = new PlayerInputAction();
         }
+
 
 
         public void SetActionMap(ControlMap map)
@@ -48,6 +51,7 @@ namespace Common.Input
             _inputAction.Gameplay.Movement.performed += OnMovementHandler;
             _inputAction.Gameplay.Movement.canceled += OnMovementHandler;
             _inputAction.Gameplay.Look.performed += OnLookHandler;
+            _inputAction.Gameplay.Look.canceled += OnLookHandler;
             _inputAction.Gameplay.Attack.started += OnAttackHandler;
 
             _isEnabled = true;
@@ -61,6 +65,7 @@ namespace Common.Input
             _inputAction.Gameplay.Movement.performed -= OnMovementHandler;
             _inputAction.Gameplay.Movement.canceled -= OnMovementHandler;
             _inputAction.Gameplay.Look.performed -= OnLookHandler;
+            _inputAction.Gameplay.Look.canceled -= OnLookHandler;
             _inputAction.Gameplay.Attack.started -= OnAttackHandler;
 
             _inputAction.Disable();

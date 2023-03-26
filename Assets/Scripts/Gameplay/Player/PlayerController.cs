@@ -85,6 +85,14 @@ namespace Gameplay.Player
             _currentState?.OnFixedUpdate();
         }
         
+        
+        public void OnLateUpdate()
+        {
+            if (!_isActive) return;
+
+            _currentState?.OnLateUpdate();
+        }
+        
 
         void IPlayer.Loss() => LossEvent?.Invoke();
     }
