@@ -22,3 +22,5 @@ MonoBehaviour:
     <BottomClamp>k__BackingField: -30
     <TopClamp>k__BackingField: 70
     <AngleOverride>k__BackingField: 0
+  <Attack>k__BackingField: {fileID: 11400000, guid: ba42e0f128ca563bd875af8873d86fe5,
+    type: 2}

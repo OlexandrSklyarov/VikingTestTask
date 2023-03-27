@@ -15,6 +15,6 @@ namespace Util
 
             timer = delay;
             return true;    
-        }        
+        }
     }
 }

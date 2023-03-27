@@ -2,23 +2,27 @@ using System;
 using Common.Input;
 using Data;
 using Gameplay.Characters.Animations;
+using Gameplay.Characters.Attack;
 using UnityEngine;
 
 namespace Gameplay.Characters.Hero
 {
     [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
-    public class HeroController : MonoBehaviour, IHero
+    public class HeroController : MonoBehaviour, IHero, IDamage
     {
         Transform IHero.CameraFollowTarget => _cameraFollowTarget;
 
         [SerializeField] private Transform _viewBody;
         [SerializeField] private Transform _cameraFollowTarget;
+        [SerializeField] private SphereCollider _damageTrigger;
         
         private Health _health;
         private RigidbodyEngine _engine;
         private CameraLookRotateProvider _cameraLookProvider;
         private InputAdaptor _inputAdaptor;
         private AnimatorProvider _animatorProvider;
+        private AttackProvider _attackProvider;
+        private StunProvider _stunProvider;
 
         public event Action DieEvent;
         
@@ -47,12 +51,17 @@ namespace Gameplay.Characters.Hero
             _animatorProvider = GetComponentInChildren<AnimatorProvider>();
             _animatorProvider.Init();
             _animatorProvider.AttackEvent += OnAttackExecute;
+
+            _attackProvider = new AttackProvider(config.Attack, _damageTrigger);
+
+            _stunProvider = new StunProvider();
         }
 
         
         private void OnAttackExecute()
         {
             Debug.Log("Check hit");
+            _attackProvider.ApplyDamage();
         }
 
 
@@ -70,11 +79,16 @@ namespace Gameplay.Characters.Hero
 
         private void OnAttackHandler()
         {
-            Debug.Log("Attack");
+            if (!_attackProvider.IsCanAttack()) return;
+
+            _attackProvider.StartAttack();
             _animatorProvider.PlayAttack();
-            _engine?.SetDirection(Vector2.zero);
+            ResetDirection();
         }
-        
+
+
+        private void ResetDirection() => _engine?.SetDirection(Vector2.zero);
+
 
         private void OnHealthIsOver(int hp)
         {
@@ -91,7 +105,18 @@ namespace Gameplay.Characters.Hero
 
         void IHero.OnFixedUpdate()
         {
+            if (_stunProvider.IsStunned()) return;
+
             _engine?.OnFixedUpdate();
+        }
+
+
+        void IHero.OnUpdate()
+        {
+            if (_stunProvider.IsStunned()) return;
+
+            _engine?.OnUpdate();
+            _animatorProvider.SetSpeed(_engine.CurrentSpeed);
         }
 
         
@@ -99,12 +124,15 @@ namespace Gameplay.Characters.Hero
         {
             _cameraLookProvider?.OnUpdate();
         }
+        
 
-
-        void IHero.OnUpdate()
+        void IDamage.TryApplyDamage(int damage, float stunTime)
         {
-            _engine?.OnUpdate();
-            _animatorProvider.SetSpeed(_engine.CurrentSpeed);
-        }
+            _health.ApplyDamage(damage);
+            _animatorProvider.PlayDamage();
+            ResetDirection();
+
+            _stunProvider.SetStun(stunTime);
+        }        
     }
 }
