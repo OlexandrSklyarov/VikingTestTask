@@ -23,12 +23,15 @@ namespace Gameplay.Characters.Hero
         private AnimatorProvider _animatorProvider;
         private AttackProvider _attackProvider;
         private StunProvider _stunProvider;
+        private bool _isInit;
 
         public event Action DieEvent;
         
 
         public void Init(HeroData config, InputAdaptor inputAdaptor)
         {
+            if (_isInit) return;
+            
             _inputAdaptor = inputAdaptor;
             
             _health = new Health(config.StartHealth);
@@ -55,6 +58,8 @@ namespace Gameplay.Characters.Hero
             _attackProvider = new AttackProvider(config.Attack, _damageTrigger);
 
             _stunProvider = new StunProvider();
+
+            _isInit = true;
         }
 
         
@@ -105,23 +110,29 @@ namespace Gameplay.Characters.Hero
 
         void IHero.OnFixedUpdate()
         {
+            if (!_isInit) return;
             if (_stunProvider.IsStunned()) return;
+            if (_attackProvider.IsAttackActive) return;
 
-            _engine?.OnFixedUpdate();
+            _engine.OnFixedUpdate();
         }
 
 
         void IHero.OnUpdate()
         {
+            if (!_isInit) return;
             if (_stunProvider.IsStunned()) return;
+            if (_attackProvider.IsAttackActive) return;
 
-            _engine?.OnUpdate();
+            _engine.OnUpdate();
             _animatorProvider.SetSpeed(_engine.CurrentSpeed);
         }
 
         
         void IHero.OnLateUpdate()
         {
+            if (!_isInit) return;
+            
             _cameraLookProvider?.OnUpdate();
         }
         

@@ -7,7 +7,7 @@ namespace Gameplay.Characters.Animations
     public class AnimatorProvider : MonoBehaviour
     {
         public Animator Animator => _animator;
-        
+
         private Animator _animator;
         
         public event Action AttackEvent;

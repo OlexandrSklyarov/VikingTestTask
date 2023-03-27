@@ -19,6 +19,8 @@ namespace Gameplay.Characters.Attack
             _resultColliders = new Collider[10];
         }
 
+        public bool IsAttackActive => !IsCanAttack();
+
 
         public void ApplyDamage()
         {   
