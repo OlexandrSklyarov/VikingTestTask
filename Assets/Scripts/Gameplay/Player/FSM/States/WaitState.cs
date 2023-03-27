@@ -1,7 +1,7 @@
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Gameplay.Cameras;
 
 namespace Gameplay.Player.FSM.States
 {
@@ -37,7 +37,10 @@ namespace Gameplay.Player.FSM.States
         
         private async void StartBattleAsync(CancellationToken token)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2f), token);
+            _agent.CameraController.ActiveCamera(CameraController.CameraType.GAMEPLAY);
+            _agent.CameraController.SetGameplayTarget(_agent.Hero.CameraFollowTarget);
+            
+            await Task.Delay(TimeSpan.FromSeconds(_agent.Config.StarBattleDelay), token);
             if (token.IsCancellationRequested) return;
             
             _context.SwitchState<BattleState>();

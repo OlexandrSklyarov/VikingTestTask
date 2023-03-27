@@ -10,8 +10,6 @@ namespace Gameplay.Player.FSM.States
 
         public override void OnStart()
         {
-            _agent.CameraController.ActiveCamera(CameraController.CameraType.GAMEPLAY);
-            _agent.CameraController.SetGameplayTarget(_agent.Hero.CameraFollowTarget);
             _agent.Hero.DieEvent += OnHeroDieHandler;
         }
         

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Input;
 using Data;
 using Gameplay.Cameras;
 using Gameplay.Characters.Hero;
@@ -12,6 +11,7 @@ namespace Gameplay.Player
 {
     public class PlayerController : IPlayer, IPlayerContextSwitcher
     {
+        PlayerData IPlayer.Config => _config;
         IHero IPlayer.Hero => _hero;
         ICameraController IPlayer.CameraController => _cameraController;
 
