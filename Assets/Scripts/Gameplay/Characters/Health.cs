@@ -15,7 +15,7 @@ namespace Gameplay.Characters
                 if (_hp <= 0) HealthZeroEvent?.Invoke(_hp);
             }
         }
-        
+
         private int _hp;
 
         public event Action<int> ChangeHealthEvent;
@@ -24,7 +24,7 @@ namespace Gameplay.Characters
         
         public Health(int startHealth)
         {
-            _hp = startHealth;
+            Reset(startHealth);
         }
 
 
@@ -32,6 +32,19 @@ namespace Gameplay.Characters
         {
             if (damage < 0) throw new ArgumentException($"Damage {damage} < 0!!!");
             CurrentHP -= damage;
+        }
+
+
+        public void Heal(int addHealth)
+        {
+            if (addHealth < 0) throw new ArgumentException($"Heal {addHealth} < 0!!!");
+            CurrentHP += addHealth;
+        }
+
+        public void Reset(int startHealth)
+        {
+            if (startHealth < 0) throw new ArgumentException($"Start health {startHealth} < 0!!!");
+            CurrentHP = startHealth;
         }
     }
 }

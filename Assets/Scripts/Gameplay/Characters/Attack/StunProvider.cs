@@ -1,4 +1,6 @@
 
+using System;
+
 namespace Gameplay.Characters.Attack
 {
     public class StunProvider
@@ -7,11 +9,14 @@ namespace Gameplay.Characters.Attack
         private bool _isStunned;
         private float _stunnedTimer;
 
-
+        public event Action OnStunnedEvent;
+        
+        
         public void SetStun(float time)
         {
             _currentSunTime = time;
             _isStunned = true;
+            OnStunnedEvent?.Invoke();
         }
 
 

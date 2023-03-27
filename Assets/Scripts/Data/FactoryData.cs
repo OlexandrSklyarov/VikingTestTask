@@ -9,7 +9,7 @@ namespace Data
     public class FactoryData : ScriptableObject
     {
         [field: SerializeField] public EnemyPoolData[] EnemyPoolData { get; private set; }
-        [field: Space(20f), SerializeField] public EnergyPoolData[] EnergyPoolData { get; private set; }
+        [field: Space(20f), SerializeField] public EnergyPoolData EnergyPoolData { get; private set; }
     }
 
 

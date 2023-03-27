@@ -12,5 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 434a0f5b58af4690931383ac1ecc3749, type: 3}
   m_Name: FactoryConfig
   m_EditorClassIdentifier: 
-  <EnemyPoolData>k__BackingField: []
-  <EnergyPoolData>k__BackingField: []
+  <EnemyPoolData>k__BackingField:
+  - <EnemyPrefab>k__BackingField: {fileID: 2191151318174172218, guid: 8d8e1571a21dd7834b5280916efd5784,
+      type: 3}
+    <PoolSize>k__BackingField: 16
+  <EnergyPoolData>k__BackingField:
+    <EnergyItemPrefab>k__BackingField: {fileID: 8404359314824115374, guid: 305a896b2a46f14e1b19a426028a8c0f,
+      type: 3}
+    <PoolSize>k__BackingField: 16

@@ -12,3 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 953fa1d0aef64168882ad87a81ebec05, type: 3}
   m_Name: EnemyConfig
   m_EditorClassIdentifier: 
+  <StartHealth>k__BackingField: 1
+  <SpawnDelay>k__BackingField: 2
+  <DeathDelay>k__BackingField: 2
+  <Attack>k__BackingField: {fileID: 11400000, guid: 8a83d7f64d70c7c3f9dcda594b9d7345,
+    type: 2}

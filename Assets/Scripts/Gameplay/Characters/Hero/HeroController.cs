@@ -8,8 +8,10 @@ using UnityEngine;
 namespace Gameplay.Characters.Hero
 {
     [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
-    public class HeroController : MonoBehaviour, IHero, IDamage
+    public class HeroController : MonoBehaviour, IHero, IDamage, ITarget
     {
+        bool ITarget.IsAlive => _isAlive;
+        Transform ITarget.MyTransform => _myTransform;
         Transform IHero.CameraFollowTarget => _cameraFollowTarget;
 
         [SerializeField] private Transform _viewBody;
@@ -23,7 +25,9 @@ namespace Gameplay.Characters.Hero
         private AnimatorProvider _animatorProvider;
         private AttackProvider _attackProvider;
         private StunProvider _stunProvider;
+        private Transform _myTransform;
         private bool _isInit;
+        private bool _isAlive;
 
         public event Action DieEvent;
         
@@ -33,7 +37,9 @@ namespace Gameplay.Characters.Hero
             if (_isInit) return;
             
             _inputAdaptor = inputAdaptor;
-            
+
+            _myTransform = transform;
+                
             _health = new Health(config.StartHealth);
             _health.ChangeHealthEvent += OnHealthChange;
             _health.HealthZeroEvent += OnHealthIsOver;
@@ -59,6 +65,7 @@ namespace Gameplay.Characters.Hero
 
             _stunProvider = new StunProvider();
 
+            _isAlive = true;
             _isInit = true;
         }
 
@@ -98,6 +105,7 @@ namespace Gameplay.Characters.Hero
         private void OnHealthIsOver(int hp)
         {
             Debug.Log($"hp is over{hp}");
+            _isAlive = false;
             DieEvent?.Invoke();
         }
 
@@ -139,11 +147,13 @@ namespace Gameplay.Characters.Hero
 
         void IDamage.TryApplyDamage(int damage, float stunTime)
         {
+            if (!_isAlive) return;
+            
             _health.ApplyDamage(damage);
             _animatorProvider.PlayDamage();
             ResetDirection();
 
             _stunProvider.SetStun(stunTime);
-        }        
+        }
     }
 }

@@ -2,7 +2,10 @@ using System;
 using Common.Input;
 using Data;
 using Gameplay.Cameras;
+using Gameplay.Characters.Enemy;
 using Gameplay.Characters.Hero;
+using Gameplay.Environment.Items;
+using Gameplay.Factories;
 using Gameplay.Player;
 using Gameplay.UI;
 using UnityEngine;
@@ -15,6 +18,7 @@ namespace Gameplay
         private readonly IUIController _uiController;
         private readonly ICameraController _cameraController;
         private readonly PlayerController _playerController;
+        private readonly EnemyManager _enemyManager;
         private readonly InputAdaptor _inputAdaptor;
 
         public event Action GameCompletedEvent;
@@ -28,17 +32,28 @@ namespace Gameplay
             _cameraController = cameraController;
             _inputAdaptor = new InputAdaptor();
 
-            _playerController = new PlayerController
-            (
-                _config.Player,
-                SpawnHero(playerSpawnPoint, _inputAdaptor),
-                cameraController
-            );
+            var hero = SpawnHero(playerSpawnPoint, _inputAdaptor);
 
+            _playerController = new PlayerController(_config.Player, hero, cameraController);
             _playerController.LossEvent += OnHeroLoss;
+
+            _enemyManager = new EnemyManager(_config.Enemy, hero, GetEnemyFactory(), GetEnergyLootFactory());
         }
 
-       
+        
+        private EnemyFactory GetEnemyFactory()
+        {
+            return new EnemyFactory(_config.Factory.EnemyPoolData);
+        }
+
+
+        private EntityFactory<EnergyItem> GetEnergyLootFactory()
+        {
+            var data = _config.Factory.EnergyPoolData;
+            return new EntityFactory<EnergyItem>(data.EnergyItemPrefab, data.PoolSize);
+        }
+
+
         private HeroController SpawnHero(Transform spawnPoint, InputAdaptor inputAdaptor)
         {
             var hero = UnityEngine.Object.Instantiate
@@ -57,6 +72,7 @@ namespace Gameplay
         public void OnUpdate()
         {
             _playerController?.OnUpdate();
+            _enemyManager?.OnUpdate();
         }
         
         
@@ -77,6 +93,7 @@ namespace Gameplay
             _cameraController.ActiveCamera(CameraController.CameraType.STARTUP);
             _inputAdaptor.Enable();
             _playerController?.Enable();
+            _enemyManager?.StartSpawn();
         }
         
         
@@ -84,6 +101,7 @@ namespace Gameplay
         {
             _inputAdaptor.Disable();
             _playerController?.Disable();
+            _enemyManager?.Stop();
         }
         
 

@@ -1,15 +1,10 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using Common.Routine;
 using Gameplay.Cameras;
 
 namespace Gameplay.Player.FSM.States
 {
     public class WaitState : BasePlayerState
     {
-        private CancellationTokenSource _cts;
-        
-        
         public WaitState(IPlayerContextSwitcher context, IPlayer agent) : base(context, agent)
         {
         }
@@ -17,33 +12,26 @@ namespace Gameplay.Player.FSM.States
         
         public override void OnStart()
         {
-            _cts = new CancellationTokenSource();
-            
-            try
-            {
-                StartBattleAsync(_cts.Token);
-            }
-            catch (TaskCanceledException e) {}
+            StartBattleWithDelay();
         }
 
 
         public override void OnStop()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = null;
         }
         
         
-        private async void StartBattleAsync(CancellationToken token)
+        
+        private void StartBattleWithDelay()
         {
             _agent.CameraController.ActiveCamera(CameraController.CameraType.GAMEPLAY);
             _agent.CameraController.SetGameplayTarget(_agent.Hero.CameraFollowTarget);
-            
-            await Task.Delay(TimeSpan.FromSeconds(_agent.Config.StarBattleDelay), token);
-            if (token.IsCancellationRequested) return;
-            
-            _context.SwitchState<BattleState>();
+
+            RoutineManager.RunWithDelay
+            (
+                () => _context.SwitchState<BattleState>(),
+                _agent.Config.StarBattleDelay
+            );
         }
     }
 }

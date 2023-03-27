@@ -1,7 +1,8 @@
+using UnityEngine;
+
 namespace Gameplay.Environment.Items
 {
-    public class EnergyItem
+    public class EnergyItem : MonoBehaviour
     {
-        
     }
 }
