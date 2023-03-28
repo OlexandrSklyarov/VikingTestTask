@@ -112,6 +112,15 @@ namespace Gameplay.Characters.Enemy
             _myTarget = target;
             SwitchState<EnemySpawnState>();
         }
+
+
+        public void StopHunt()
+        {
+            _animatorProvider.SetSpeed(0f);
+            _currentState?.OnStop();
+            _currentState = null;
+            _navAgent.enabled = false;
+        }
         
         
         void IEnemyAgent.Die()
@@ -124,9 +133,7 @@ namespace Gameplay.Characters.Enemy
         {
             _entityUI.Hide();
             _collider.enabled = false;
-            _navAgent.enabled = false;
-            _currentState?.OnStop();
-            _currentState = null;
+            StopHunt();
         }
 
         
@@ -152,7 +159,9 @@ namespace Gameplay.Characters.Enemy
 
         void IEnemyAgent.Stop()
         {
-            _navAgent.SetDestination(_navAgent.transform.position);
+            if (_navAgent.enabled)
+                _navAgent.SetDestination(_navAgent.transform.position);
+            
             _animatorProvider.SetSpeed(0f);
         }
 

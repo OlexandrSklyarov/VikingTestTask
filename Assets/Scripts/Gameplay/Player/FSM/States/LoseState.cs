@@ -8,6 +8,7 @@ namespace Gameplay.Player.FSM.States
 
         public override void OnStart()
         {
+            _agent.Loss();
         }
 
         public override void OnStop()

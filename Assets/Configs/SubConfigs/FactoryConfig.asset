@@ -17,6 +17,6 @@ MonoBehaviour:
       type: 3}
     <PoolSize>k__BackingField: 16
   <EnergyPoolData>k__BackingField:
-    <EnergyItemPrefab>k__BackingField: {fileID: 8404359314824115374, guid: 305a896b2a46f14e1b19a426028a8c0f,
+    <EnergyItemPrefab>k__BackingField: {fileID: 5226273803102785646, guid: 305a896b2a46f14e1b19a426028a8c0f,
       type: 3}
     <PoolSize>k__BackingField: 16

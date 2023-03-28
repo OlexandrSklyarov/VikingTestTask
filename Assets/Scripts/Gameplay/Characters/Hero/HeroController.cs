@@ -125,6 +125,7 @@ namespace Gameplay.Characters.Hero
         private void OnHealthIsOver(int hp)
         {
             Debug.Log($"hp is over{hp}");
+            _animatorProvider.PlayDie();
             _isAlive = false;
             DieEvent?.Invoke();
         }

@@ -66,6 +66,8 @@ namespace Gameplay.Characters.Enemy
 
         private void OnEnemyDieHandler(EnemyAgent enemy)
         {
+            SpawnLoot(enemy.transform.position);
+            
             enemy.DieEvent -= OnEnemyDieHandler;
             _enemies.Remove(enemy);
             _factory.ReturnToStorage(enemy);
@@ -77,10 +79,20 @@ namespace Gameplay.Characters.Enemy
             }
         }
 
+        
+        private void SpawnLoot(Vector3 pos)
+        {
+            var loot = _lootFactory.GetItem();
+            loot.transform.position = pos + Vector3.up;;
+        }
+
 
         public void Stop()
         {
-            
+            for (int i = 0; i < _enemies.Count; i++)
+            {
+                _enemies[i].StopHunt();
+            }
         }
         
 

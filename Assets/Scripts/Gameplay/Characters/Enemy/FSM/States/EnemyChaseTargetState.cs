@@ -10,6 +10,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
+            _agent.Stop();
             _agent.StunProvider.OnStunnedEvent += Stun;
         }
       
