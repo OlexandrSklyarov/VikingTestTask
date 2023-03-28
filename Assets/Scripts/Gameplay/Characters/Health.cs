@@ -5,6 +5,8 @@ namespace Gameplay.Characters
 {
     public class Health
     {
+        public int MaxHP { get; private set; }
+
         public int CurrentHP
         {
             get => _hp;
@@ -45,6 +47,7 @@ namespace Gameplay.Characters
         {
             if (startHealth < 0) throw new ArgumentException($"Start health {startHealth} < 0!!!");
             CurrentHP = startHealth;
+            MaxHP = startHealth;
         }
     }
 }

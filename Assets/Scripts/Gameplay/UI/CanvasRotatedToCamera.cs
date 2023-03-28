@@ -8,16 +8,30 @@ namespace Gameplay.Level.UI
     {
         private Transform _uiCameraTransform;
         private Transform _myTransform;
-        
-        
+        private Camera _mainCamera;
+        private bool _isInit;
+
+
         private void OnEnable()
         {
-            _uiCameraTransform = Camera.main.gameObject
-                .GetComponent<UniversalAdditionalCameraData>()
-                .cameraStack[0].transform;
+            Init();
             
             _myTransform = transform;
             GameEntityManager.AddEntity(this, gameObject.GetInstanceID());
+        }
+
+
+        private void Init()
+        {
+            if (_isInit) return;
+
+            _mainCamera = Camera.main;
+
+            GetComponent<Canvas>().worldCamera = _mainCamera;
+
+            _uiCameraTransform = _mainCamera.transform;
+            
+            _isInit = true;
         }
 
 

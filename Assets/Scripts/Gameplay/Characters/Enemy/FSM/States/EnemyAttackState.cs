@@ -9,21 +9,21 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHAndler;
-
+            _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHandler;
+            
             _agent.Stop();
 
-            if (_agent.MyTarget == null) Wait();
+            if (IsTargetNotExist()) Wait();
         }
         
 
         public override void OnStop()
         {
-            _agent.AnimatorProvider.AttackEvent -= OnAttackExecuteHAndler;
+            _agent.AnimatorProvider.AttackEvent -= OnAttackExecuteHandler;
         }
 
         
-        private void OnAttackExecuteHAndler()
+        private void OnAttackExecuteHandler()
         {
             _agent.AttackProvider.ApplyDamage();
         }
@@ -31,7 +31,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnUpdate()
         {
-            if (IsTargetFarOrNotExist())
+            if (IsTargetNotExistOrFar())
             {
                 Wait();
                 return;
@@ -46,10 +46,15 @@ namespace Gameplay.Characters.Enemy.FSM.States
             
         }
 
-        private bool IsTargetFarOrNotExist()
+        private bool IsTargetNotExistOrFar()
         {
-            return _agent.MyTarget == null || !_agent.MyTarget.IsAlive ||
+            return IsTargetNotExist() ||
                    (IsTargetFar() && !_agent.AttackProvider.IsAttackActive);
+        }
+
+        private bool IsTargetNotExist()
+        {
+            return _agent.MyTarget == null || !_agent.MyTarget.IsAlive;
         }
 
 

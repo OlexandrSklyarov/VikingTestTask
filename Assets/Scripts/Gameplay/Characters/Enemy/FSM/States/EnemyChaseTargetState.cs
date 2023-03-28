@@ -55,7 +55,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
         private void MoveToTarget()
         {
             _agent.NavAgent.SetDestination(_agent.MyTarget.MyTransform.position);
-            _agent.AnimatorProvider.SetSpeed(1f);
+            _agent.AnimatorProvider.SetSpeed(Mathf.Clamp01(_agent.NavAgent.velocity.magnitude));
             _agent.RotateViewToDirection(_agent.NavAgent.velocity);
         }
 

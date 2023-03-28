@@ -6,6 +6,7 @@ using Gameplay.Characters.Animations;
 using Gameplay.Characters.Attack;
 using Gameplay.Characters.Enemy.FSM;
 using Gameplay.Characters.Enemy.FSM.States;
+using Gameplay.UI.Characters;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,7 +18,7 @@ namespace Gameplay.Characters.Enemy
     public class EnemyAgent : MonoBehaviour, IDamage, IEnemyAgent, IEnemyContextSwitcher
     {
         public EnemyType Type => _type;
-        float IEnemyAgent.AttackRange => _navAgent.radius * 5f;
+        float IEnemyAgent.AttackRange => _navAgent.radius * 4f;
         ITarget IEnemyAgent.MyTarget => _myTarget;
         NavMeshAgent IEnemyAgent.NavAgent => _navAgent;
         StunProvider IEnemyAgent.StunProvider => _stunProvider;
@@ -29,7 +30,7 @@ namespace Gameplay.Characters.Enemy
         [SerializeField] private EnemyType _type;
         [SerializeField] private Transform _viewBody;
         [SerializeField] private SphereCollider _damageTrigger;
-        [SerializeField] private TextMeshProUGUI _debugText;
+        [SerializeField] private EntityUI _entityUI;
 
         
         private EnemyData _config;
@@ -91,7 +92,7 @@ namespace Gameplay.Characters.Enemy
         
         private void OnHealthChange(int hp)
         {
-            Debug.Log($"hp: {hp}");
+            _entityUI.SetHP((float)hp / _health.MaxHP);
         }
         
 
@@ -145,8 +146,6 @@ namespace Gameplay.Characters.Enemy
             _currentState?.OnStop();
             _currentState = state;
             _currentState?.OnStart();            
-           
-            _debugText.text = $" State: {_currentState}";
         }
 
         
