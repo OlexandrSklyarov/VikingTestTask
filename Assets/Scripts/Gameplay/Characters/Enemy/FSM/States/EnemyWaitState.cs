@@ -8,7 +8,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            _agent.NavAgent.SetDestination(_agent.NavAgent.transform.position);
+            _agent.Stop();
 
             if (_agent.MyTarget != null && _agent.MyTarget.IsAlive) ChaseTarget();
         }

@@ -16,7 +16,7 @@ MonoBehaviour:
     type: 3}
   <Player>k__BackingField: {fileID: 11400000, guid: 1ef334fe8630b367980c56972f9380a1,
     type: 2}
-  <Enemy>k__BackingField: {fileID: 11400000, guid: 39baa9f8dcca6d48d88c9bfc8c3e1203,
+  <EnemyManager>k__BackingField: {fileID: 11400000, guid: fe9941d7859d4dd2e9f7661987146bda,
     type: 2}
   <Factory>k__BackingField: {fileID: 11400000, guid: 9d88239a79b9c65678f3f7d6e20862ee,
     type: 2}

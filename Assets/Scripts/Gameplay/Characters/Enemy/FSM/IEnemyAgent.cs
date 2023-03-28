@@ -15,9 +15,11 @@ namespace Gameplay.Characters.Enemy.FSM
         EnemyData Config { get; }
         AnimatorProvider AnimatorProvider { get; }
         AttackProvider AttackProvider { get; }
-        
+        float AttackRange { get; }
+
         void Die();
         void RotateViewToTarget(Vector3 lookTarget);
         void RotateViewToDirection(Vector3 dir);
+        void Stop();
     }
 }

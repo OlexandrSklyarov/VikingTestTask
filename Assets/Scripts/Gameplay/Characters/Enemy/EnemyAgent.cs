@@ -6,6 +6,7 @@ using Gameplay.Characters.Animations;
 using Gameplay.Characters.Attack;
 using Gameplay.Characters.Enemy.FSM;
 using Gameplay.Characters.Enemy.FSM.States;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -16,6 +17,7 @@ namespace Gameplay.Characters.Enemy
     public class EnemyAgent : MonoBehaviour, IDamage, IEnemyAgent, IEnemyContextSwitcher
     {
         public EnemyType Type => _type;
+        float IEnemyAgent.AttackRange => _navAgent.radius * 5f;
         ITarget IEnemyAgent.MyTarget => _myTarget;
         NavMeshAgent IEnemyAgent.NavAgent => _navAgent;
         StunProvider IEnemyAgent.StunProvider => _stunProvider;
@@ -27,6 +29,7 @@ namespace Gameplay.Characters.Enemy
         [SerializeField] private EnemyType _type;
         [SerializeField] private Transform _viewBody;
         [SerializeField] private SphereCollider _damageTrigger;
+        [SerializeField] private TextMeshProUGUI _debugText;
 
         
         private EnemyData _config;
@@ -52,7 +55,8 @@ namespace Gameplay.Characters.Enemy
                 _navAgent = GetComponent<NavMeshAgent>();
                 
                 _animatorProvider = GetComponentInChildren<AnimatorProvider>();
-                
+                _animatorProvider.Init();
+
                 _health = new Health(_config.StartHealth);
                 _health.ChangeHealthEvent += OnHealthChange;
 
@@ -65,6 +69,7 @@ namespace Gameplay.Characters.Enemy
                     new EnemySpawnState(this, this),
                     new EnemyWaitState(this, this),
                     new EnemyChaseTargetState(this, this),
+                    new EnemyAttackState(this, this),
                     new EnemyDamageState(this, this),
                     new EnemyDieState(this, this)
                 };
@@ -76,7 +81,7 @@ namespace Gameplay.Characters.Enemy
             
             _navAgent.enabled = true;
             _navAgent.Warp(transform.position);
-            _navAgent.avoidancePriority = 20 + Random.Range(1, 30); // 50 max
+            _navAgent.avoidancePriority = 50 + Random.Range(1, 49); // 99 max
             
             _currentState = _allStates[0];
 
@@ -93,7 +98,7 @@ namespace Gameplay.Characters.Enemy
         public void SetTarget(ITarget target)
         {
             _myTarget = target;
-            _currentState?.OnStart();
+            SwitchState<EnemySpawnState>();
         }
         
         
@@ -108,13 +113,14 @@ namespace Gameplay.Characters.Enemy
         
         void IEnemyAgent.RotateViewToTarget(Vector3 lookTarget)
         {
-            //_viewBody.
+            var dir = lookTarget - transform.position;
+            _viewBody.rotation = Util.Vector3Math.DirToQuaternion(dir);
         }
         
         
         void IEnemyAgent.RotateViewToDirection(Vector3 dir)
         {
-            //_viewBody.
+            _viewBody.rotation = Util.Vector3Math.DirToQuaternion(dir);
         }
         
 
@@ -123,15 +129,24 @@ namespace Gameplay.Characters.Enemy
             _health.ApplyDamage(damage);
             _stunProvider.SetStun(stunTime);
         }
+
+
+        void IEnemyAgent.Stop()
+        {
+            _navAgent.SetDestination(_navAgent.transform.position);
+            _animatorProvider.SetSpeed(0f);
+        }
         
 
         public void SwitchState<T>() where T : BaseEnemyState
         {
             var state = _allStates.FirstOrDefault(s => s is T);
-
+            
             _currentState?.OnStop();
             _currentState = state;
-            _currentState?.OnStart();
+            _currentState?.OnStart();            
+           
+            _debugText.text = $" State: {_currentState}";
         }
 
         

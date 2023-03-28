@@ -15,14 +15,12 @@ namespace Gameplay.Characters.Enemy
         private readonly EnemyFactory _factory;
         private readonly EntityFactory<EnergyItem> _lootFactory;
         private readonly List<EnemyAgent> _enemies;
-        private readonly EnemyData _enemyConfig;
-
-        private const int MIN_ENEMY_COUNT = 10;
+        private readonly EnemyManagerData _config;
 
 
-        public EnemyManager(EnemyData enemyConfig, ITarget targetHero, EnemyFactory factory, EntityFactory<EnergyItem> lootFactory)
+        public EnemyManager(EnemyManagerData config, ITarget targetHero, EnemyFactory factory, EntityFactory<EnergyItem> lootFactory)
         {
-            _enemyConfig = enemyConfig;
+            _config = config;
             _targetHero = targetHero;
             _factory = factory;
             _lootFactory = lootFactory;
@@ -33,7 +31,7 @@ namespace Gameplay.Characters.Enemy
 
         public void StartSpawn()
         {
-            RoutineManager.Run(SpawnEnemy(MIN_ENEMY_COUNT));
+            RoutineManager.Run(SpawnEnemy(_config.MinEnemyCount));
         }
 
         
@@ -43,8 +41,8 @@ namespace Gameplay.Characters.Enemy
             {
                 var enemy = _factory.Get(EnemyType.SIMPLE_MUTANT);
                 enemy.transform.position = GetRandomPosition(_targetHero.MyTransform);
-                enemy.Init(_enemyConfig);
                 enemy.DieEvent += OnEnemyDieHandler;
+                enemy.Init(_config.Enemy);
                 enemy.SetTarget(_targetHero);
                 
                 _enemies.Add(enemy);
@@ -56,8 +54,8 @@ namespace Gameplay.Characters.Enemy
 
         private Vector3 GetRandomPosition(Transform targetHero)
         {
-            var offset = Random.insideUnitSphere * 4f;
-            if (offset.magnitude < 2f) offset.Scale(Vector3.one * 2f);
+            var offset = Random.insideUnitSphere * _config.SpawnRadius.Max;
+            if (offset.magnitude < _config.SpawnRadius.Min) offset = offset.normalized * _config.SpawnRadius.Min;
             
             var pos = targetHero.position + offset;
             
@@ -72,10 +70,10 @@ namespace Gameplay.Characters.Enemy
             _enemies.Remove(enemy);
             _factory.ReturnToStorage(enemy);
 
-            if (_enemies.Count < MIN_ENEMY_COUNT)
+            if (_enemies.Count < _config.MinEnemyCount)
             {
-                var count = MIN_ENEMY_COUNT - _enemies.Count;
-                RoutineManager.Run(SpawnEnemy(MIN_ENEMY_COUNT));
+                var count = _config.MinEnemyCount - _enemies.Count;
+                RoutineManager.Run(SpawnEnemy(count));
             }
         }
 

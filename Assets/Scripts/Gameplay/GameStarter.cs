@@ -70,5 +70,11 @@ namespace Gameplay
             if (!_isRunning) return;
             _gameProcess?.OnLateUpdate();
         }
+        
+
+        private void OnDestroy()
+        {
+            _gameProcess?.Clear();
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            _agent.NavAgent.SetDestination(_agent.NavAgent.transform.position);
+            _agent.Stop();
             _agent.AnimatorProvider.PlayDie();
 
             RoutineManager.RunWithDelay

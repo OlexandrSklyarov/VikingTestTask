@@ -4,6 +4,7 @@ using Data;
 using Gameplay.Cameras;
 using Gameplay.Characters.Enemy;
 using Gameplay.Characters.Hero;
+using Gameplay.EntityManager;
 using Gameplay.Environment.Items;
 using Gameplay.Factories;
 using Gameplay.Player;
@@ -20,6 +21,7 @@ namespace Gameplay
         private readonly PlayerController _playerController;
         private readonly EnemyManager _enemyManager;
         private readonly InputAdaptor _inputAdaptor;
+        private readonly GameEntityManager _entityManager;
 
         public event Action GameCompletedEvent;
         
@@ -30,6 +32,9 @@ namespace Gameplay
             _config = config;
             _uiController = uiController;
             _cameraController = cameraController;
+
+            _entityManager = new GameEntityManager();
+            
             _inputAdaptor = new InputAdaptor();
 
             var hero = SpawnHero(playerSpawnPoint, _inputAdaptor);
@@ -37,7 +42,7 @@ namespace Gameplay
             _playerController = new PlayerController(_config.Player, hero, cameraController);
             _playerController.LossEvent += OnHeroLoss;
 
-            _enemyManager = new EnemyManager(_config.Enemy, hero, GetEnemyFactory(), GetEnergyLootFactory());
+            _enemyManager = new EnemyManager(_config.EnemyManager, hero, GetEnemyFactory(), GetEnergyLootFactory());
         }
 
         
@@ -71,6 +76,7 @@ namespace Gameplay
 
         public void OnUpdate()
         {
+            _entityManager?.OnUpdate();
             _playerController?.OnUpdate();
             _enemyManager?.OnUpdate();
         }
@@ -78,12 +84,14 @@ namespace Gameplay
         
         public void OnFixedUpdate()
         {
+            _entityManager?.OnFixedUpdate();
             _playerController?.OnFixedUpdate();
         }
         
         
         public void OnLateUpdate()
         {
+            _entityManager?.OnLateUpdate();
             _playerController?.OnLateUpdate();
         }
         
@@ -102,6 +110,12 @@ namespace Gameplay
             _inputAdaptor.Disable();
             _playerController?.Disable();
             _enemyManager?.Stop();
+        }
+
+
+        public void Clear()
+        {
+            _entityManager?.Clear();
         }
         
 

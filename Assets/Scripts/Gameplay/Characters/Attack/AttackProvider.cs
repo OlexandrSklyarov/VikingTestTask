@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Data;
 using UnityEngine; 
@@ -32,8 +31,11 @@ namespace Gameplay.Characters.Attack
                 _config.TargetLayerMask
             ) <= 0) return;
 
-            foreach(var col in _resultColliders)
+            var colliders = _resultColliders.Where(c => c != null);
+            
+            foreach(var col in colliders)
             {
+                Util.DebugUtility.PrintColor($"col {col}", Color.cyan);
                 if (!col.TryGetComponent(out IDamage target)) continue;
             }
         }

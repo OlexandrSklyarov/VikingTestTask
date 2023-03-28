@@ -1,22 +1,17 @@
-using System;
-using UnityEngine;
 
 namespace Gameplay.Characters.Enemy.FSM.States
 {
     public class EnemyAttackState : BaseEnemyState
     {
-        private readonly float _minSqAttackDistance;
-        
-
         public EnemyAttackState(IEnemyContextSwitcher context, IEnemyAgent agent) : base(context, agent)
         {
-            var attackDistance = _agent.NavAgent.radius * 2f;
-            _minSqAttackDistance = attackDistance * attackDistance;
         }
 
         public override void OnStart()
         {
-            _agent.NavAgent.SetDestination(_agent.NavAgent.transform.position);
+            _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHAndler;
+
+            _agent.Stop();
 
             if (_agent.MyTarget == null) Wait();
         }
@@ -24,12 +19,23 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStop()
         {
+            _agent.AnimatorProvider.AttackEvent -= OnAttackExecuteHAndler;
+        }
+
+        
+        private void OnAttackExecuteHAndler()
+        {
+            _agent.AttackProvider.ApplyDamage();
         }
 
 
         public override void OnUpdate()
         {
-            if (_agent.MyTarget == null || !_agent.MyTarget.IsAlive || IsTargetFar()) Wait();
+            if (IsTargetFarOrNotExist())
+            {
+                Wait();
+                return;
+            }
             
             if (_agent.AttackProvider.IsCanAttack())
             {
@@ -40,11 +46,17 @@ namespace Gameplay.Characters.Enemy.FSM.States
             
         }
 
-        
+        private bool IsTargetFarOrNotExist()
+        {
+            return _agent.MyTarget == null || !_agent.MyTarget.IsAlive ||
+                   (IsTargetFar() && !_agent.AttackProvider.IsAttackActive);
+        }
+
+
         private bool IsTargetFar()
         {
             var sqDist = (_agent.NavAgent.transform.position - _agent.MyTarget.MyTransform.position).sqrMagnitude;
-            return sqDist > _minSqAttackDistance;
+            return sqDist > _agent.AttackRange * _agent.AttackRange;
         }
 
 
