@@ -10,19 +10,21 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            _agent.StunProvider.OnStunnedEvent += OnStunHandler;
+            _agent.StunProvider.OnStunnedEvent += Stun;
         }
       
 
         public override void OnStop()
         {
             _agent.Stop();
-            _agent.StunProvider.OnStunnedEvent -= OnStunHandler;
+            _agent.StunProvider.OnStunnedEvent -= Stun;
         }
 
 
         public override void OnUpdate()
         {
+            if (_agent.StunProvider.IsStunned()) return;
+         
             if (!IsExist())
             {
                 Wait();
@@ -66,6 +68,6 @@ namespace Gameplay.Characters.Enemy.FSM.States
         private void Wait() => _context.SwitchState<EnemyWaitState>();
 
         
-        private void OnStunHandler() => _context.SwitchState<EnemyDamageState>();
+        private void Stun() => _context.SwitchState<EnemyDamageState>();
     }
 }

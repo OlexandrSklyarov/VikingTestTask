@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: EnemyAttackConfig
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 1
-  <StunTime>k__BackingField: 2
+  <StunTime>k__BackingField: 1.7
   <AttackDelay>k__BackingField: 2
+  <ViewTargetRadius>k__BackingField: 2
   <TargetLayerMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 64

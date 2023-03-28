@@ -11,6 +11,7 @@ namespace Gameplay.Characters.Hero
     public class HeroController : MonoBehaviour, IHero, IDamage, ITarget
     {
         bool ITarget.IsAlive => _isAlive;
+        Vector3 IDamage.Position => transform.position;
         Transform ITarget.MyTransform => _myTransform;
         Transform IHero.CameraFollowTarget => _cameraFollowTarget;
 
@@ -18,6 +19,7 @@ namespace Gameplay.Characters.Hero
         [SerializeField] private Transform _cameraFollowTarget;
         [SerializeField] private SphereCollider _damageTrigger;
         
+        private HeroData _config;
         private Health _health;
         private RigidbodyEngine _engine;
         private CameraLookRotateProvider _cameraLookProvider;
@@ -35,23 +37,24 @@ namespace Gameplay.Characters.Hero
         public void Init(HeroData config, InputAdaptor inputAdaptor)
         {
             if (_isInit) return;
-            
+
+            _config = config;
             _inputAdaptor = inputAdaptor;
 
             _myTransform = transform;
                 
-            _health = new Health(config.StartHealth);
+            _health = new Health(_config.StartHealth);
             _health.ChangeHealthEvent += OnHealthChange;
             _health.HealthZeroEvent += OnHealthIsOver;
 
             _engine = new RigidbodyEngine
             (
-                config.Engine,
+                _config.Engine,
                 GetComponent<Rigidbody>(),
                 _viewBody
             );
-
-            _cameraLookProvider = new CameraLookRotateProvider(config.Camera, _cameraFollowTarget);
+            
+            _cameraLookProvider = new CameraLookRotateProvider(_config.Camera, _cameraFollowTarget);
 
             _inputAdaptor.OnMovement += OnMovementHandler;
             _inputAdaptor.OnLook += OnLookHandler;
@@ -59,9 +62,10 @@ namespace Gameplay.Characters.Hero
 
             _animatorProvider = GetComponentInChildren<AnimatorProvider>();
             _animatorProvider.Init();
+            _animatorProvider.PlayAlive();
             _animatorProvider.AttackEvent += OnAttackExecute;
 
-            _attackProvider = new AttackProvider(config.Attack, _damageTrigger);
+            _attackProvider = new AttackProvider(_config.Attack, _damageTrigger);
 
             _stunProvider = new StunProvider();
 
@@ -85,7 +89,10 @@ namespace Gameplay.Characters.Hero
 
         private void OnMovementHandler(Vector2 dir)
         {
-            _engine?.SetDirection(dir);
+            if (_stunProvider.IsStunned()) 
+                ResetDirection();
+            else
+                _engine?.SetDirection(dir);
         }
 
 
@@ -96,6 +103,19 @@ namespace Gameplay.Characters.Hero
             _attackProvider.StartAttack();
             _animatorProvider.PlayAttack();
             ResetDirection();
+            
+            _attackProvider.TryFindNearTarget
+            (
+                _myTransform.position,
+                _viewBody.forward,
+                RotateViewToTarget
+            );
+        }
+       
+        private void RotateViewToTarget(Vector3 lookTarget)
+        {
+            var dir = lookTarget - transform.position;
+            _viewBody.rotation = Util.Vector3Math.DirToQuaternion(dir);
         }
 
 
@@ -152,7 +172,6 @@ namespace Gameplay.Characters.Hero
             _health.ApplyDamage(damage);
             _animatorProvider.PlayDamage();
             ResetDirection();
-
             _stunProvider.SetStun(stunTime);
         }
     }

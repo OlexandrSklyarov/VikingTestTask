@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <StartHealth>k__BackingField: 1
   <SpawnDelay>k__BackingField: 2
-  <DeathDelay>k__BackingField: 2
+  <DeathDelay>k__BackingField: 4
   <Attack>k__BackingField: {fileID: 11400000, guid: 8a83d7f64d70c7c3f9dcda594b9d7345,
     type: 2}

@@ -9,6 +9,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
+            _agent.StunProvider.OnStunnedEvent += Stun;
             _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHandler;
             
             _agent.Stop();
@@ -19,6 +20,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStop()
         {
+            _agent.StunProvider.OnStunnedEvent -= Stun;
             _agent.AnimatorProvider.AttackEvent -= OnAttackExecuteHandler;
         }
 
@@ -31,6 +33,8 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnUpdate()
         {
+            if (_agent.StunProvider.IsStunned()) return;
+            
             if (IsTargetNotExistOrFar())
             {
                 Wait();
@@ -43,8 +47,8 @@ namespace Gameplay.Characters.Enemy.FSM.States
                 _agent.AnimatorProvider.PlayAttack();
                 _agent.AttackProvider.StartAttack();
             }
-            
         }
+
 
         private bool IsTargetNotExistOrFar()
         {
@@ -63,6 +67,9 @@ namespace Gameplay.Characters.Enemy.FSM.States
             var sqDist = (_agent.NavAgent.transform.position - _agent.MyTarget.MyTransform.position).sqrMagnitude;
             return sqDist > _agent.AttackRange * _agent.AttackRange;
         }
+        
+        
+        private void Stun() => _context.SwitchState<EnemyDamageState>();
 
 
         private void Wait() => _context.SwitchState<EnemyWaitState>();

@@ -34,6 +34,7 @@ namespace Gameplay.Characters
         {
             if (damage < 0) throw new ArgumentException($"Damage {damage} < 0!!!");
             CurrentHP -= damage;
+            Util.Debug.PrintColor($"{CurrentHP}", Color.yellow);
         }
 
 
@@ -42,6 +43,7 @@ namespace Gameplay.Characters
             if (addHealth < 0) throw new ArgumentException($"Heal {addHealth} < 0!!!");
             CurrentHP += addHealth;
         }
+        
 
         public void Reset(int startHealth)
         {

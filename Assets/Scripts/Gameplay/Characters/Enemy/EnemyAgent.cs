@@ -14,11 +14,12 @@ using Random = UnityEngine.Random;
 
 namespace Gameplay.Characters.Enemy
 {
-    [RequireComponent(typeof(NavMeshAgent),  typeof(CapsuleCollider))]
+    [RequireComponent(typeof(NavMeshAgent),  typeof(CapsuleCollider), typeof(Rigidbody))]
     public class EnemyAgent : MonoBehaviour, IDamage, IEnemyAgent, IEnemyContextSwitcher
     {
         public EnemyType Type => _type;
         float IEnemyAgent.AttackRange => _navAgent.radius * 4f;
+        Vector3 IDamage.Position => transform.position;
         ITarget IEnemyAgent.MyTarget => _myTarget;
         NavMeshAgent IEnemyAgent.NavAgent => _navAgent;
         StunProvider IEnemyAgent.StunProvider => _stunProvider;
@@ -32,7 +33,6 @@ namespace Gameplay.Characters.Enemy
         [SerializeField] private SphereCollider _damageTrigger;
         [SerializeField] private EntityUI _entityUI;
 
-        
         private EnemyData _config;
         private NavMeshAgent _navAgent;
         private AnimatorProvider _animatorProvider;
@@ -44,6 +44,7 @@ namespace Gameplay.Characters.Enemy
         private BaseEnemyState _currentState;
         private int _generation;
         private bool _isInit;
+        private CapsuleCollider _collider;
 
         public event Action<EnemyAgent> DieEvent;
 
@@ -54,6 +55,10 @@ namespace Gameplay.Characters.Enemy
             {
                 _config = config;
                 _navAgent = GetComponent<NavMeshAgent>();
+
+                GetComponent<Rigidbody>().isKinematic = true;
+
+                _collider = GetComponent<CapsuleCollider>();
                 
                 _animatorProvider = GetComponentInChildren<AnimatorProvider>();
                 _animatorProvider.Init();
@@ -75,7 +80,13 @@ namespace Gameplay.Characters.Enemy
                     new EnemyDieState(this, this)
                 };
             }
+            
+            _animatorProvider.PlayAlive();
 
+            _entityUI.Show();
+            
+            _collider.enabled = true;
+                
             _health.Reset(_config.StartHealth + _generation);
             
             _generation++;
@@ -105,10 +116,17 @@ namespace Gameplay.Characters.Enemy
         
         void IEnemyAgent.Die()
         {
+            DieEvent?.Invoke(this);
+        }
+        
+        
+        void IEnemyAgent. PrepareForDie()
+        {
+            _entityUI.Hide();
+            _collider.enabled = false;
             _navAgent.enabled = false;
             _currentState?.OnStop();
-            
-            DieEvent?.Invoke(this);
+            _currentState = null;
         }
 
         
@@ -137,8 +155,8 @@ namespace Gameplay.Characters.Enemy
             _navAgent.SetDestination(_navAgent.transform.position);
             _animatorProvider.SetSpeed(0f);
         }
-        
 
+        
         public void SwitchState<T>() where T : BaseEnemyState
         {
             var state = _allStates.FirstOrDefault(s => s is T);

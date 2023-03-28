@@ -11,8 +11,7 @@ namespace Data
         [field: Space(10f), SerializeField] public HeroEngine Engine { get; private set; }    
         [field: Space(10f), SerializeField] public HeroCamera Camera { get; private set; }
         [field: Space(10f),  SerializeField] public AttackData Attack { get; private set; }
-
-        }
+    }
 
     [Serializable]
     public class HeroEngine

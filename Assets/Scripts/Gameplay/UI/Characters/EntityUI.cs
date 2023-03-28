@@ -5,6 +5,7 @@ namespace Gameplay.UI.Characters
 {
     public class EntityUI : MonoBehaviour
     {
+        [SerializeField] private GameObject _rootElements;
         [SerializeField] private Image _hpBar;
 
 
@@ -12,5 +13,11 @@ namespace Gameplay.UI.Characters
         {
             _hpBar.fillAmount = value;
         }
+        
+
+        public void Show() => _rootElements.SetActive(true);
+
+        
+        public void Hide() => _rootElements.SetActive(false);
     }
 }

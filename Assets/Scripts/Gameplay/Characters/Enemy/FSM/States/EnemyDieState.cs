@@ -12,6 +12,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
         {
             _agent.Stop();
             _agent.AnimatorProvider.PlayDie();
+            _agent.PrepareForDie();
 
             RoutineManager.RunWithDelay
             (

@@ -21,5 +21,6 @@ namespace Gameplay.Characters.Enemy.FSM
         void RotateViewToTarget(Vector3 lookTarget);
         void RotateViewToDirection(Vector3 dir);
         void Stop();
+        void PrepareForDie();
     }
 }
