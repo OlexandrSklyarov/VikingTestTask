@@ -1,3 +1,4 @@
+using System;
 using Data;
 using Gameplay.Characters.Animations;
 using Gameplay.Characters.Attack;
@@ -10,17 +11,19 @@ namespace Gameplay.Characters.Enemy.FSM
     {
         ITarget MyTarget { get; }
         NavMeshAgent NavAgent { get; }
-        StunProvider StunProvider { get; }
         Health Health { get; }
         EnemyData Config { get; }
         AnimatorProvider AnimatorProvider { get; }
         AttackProvider AttackProvider { get; }
         float AttackRange { get; }
+        
+        event Action OnStunnedEvent;
 
         void Die();
         void RotateViewToTarget(Vector3 lookTarget);
         void RotateViewToDirection(Vector3 dir);
         void Stop();
         void PrepareForDie();
+        void UpdateNavigationPriority();
     }
 }

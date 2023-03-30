@@ -16,10 +16,10 @@ MonoBehaviour:
   <Engine>k__BackingField:
     <Speed>k__BackingField: 80
     <AngularSpeed>k__BackingField: 600
-    <SmoothMovementTime>k__BackingField: 0.5
+    <SmoothMovementTime>k__BackingField: 0.3
   <Camera>k__BackingField:
     <LookDeltaThreshold>k__BackingField: 0.01
-    <BottomClamp>k__BackingField: -30
+    <BottomClamp>k__BackingField: -10
     <TopClamp>k__BackingField: 70
     <AngleOverride>k__BackingField: 0
   <Attack>k__BackingField: {fileID: 11400000, guid: ba42e0f128ca563bd875af8873d86fe5,

@@ -35,5 +35,18 @@ namespace Gameplay.Characters.Animations
 
 
         private void SetTrigger(string triggerName) => _animator.SetTrigger(triggerName);
+        
+        
+        private bool IsPlayState(string stateName)
+        {
+            var state = _animator.GetCurrentAnimatorStateInfo(0);
+            return state.IsName(stateName);
+        }
+        
+        
+        public bool IsPlayAttack() => IsPlayState(ConstPrm.Animation.ATTACK);
+
+        
+        public bool IsPlayDamage() => IsPlayState(ConstPrm.Animation.DAMAGE);
     }
 }

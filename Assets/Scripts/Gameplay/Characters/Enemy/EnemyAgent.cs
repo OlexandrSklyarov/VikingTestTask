@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using DG.Tweening;
 using Gameplay.Characters.Animations;
 using Gameplay.Characters.Attack;
 using Gameplay.Characters.Enemy.FSM;
@@ -19,10 +20,9 @@ namespace Gameplay.Characters.Enemy
     {
         public EnemyType Type => _type;
         float IEnemyAgent.AttackRange => _navAgent.radius * 4f;
-        Vector3 IDamage.Position => transform.position;
+        Vector3 IDamage.Position => _myTransform.position;
         ITarget IEnemyAgent.MyTarget => _myTarget;
         NavMeshAgent IEnemyAgent.NavAgent => _navAgent;
-        StunProvider IEnemyAgent.StunProvider => _stunProvider;
         Health IEnemyAgent.Health => _health;
         EnemyData IEnemyAgent.Config => _config;
         AnimatorProvider IEnemyAgent.AnimatorProvider => _animatorProvider;
@@ -33,20 +33,23 @@ namespace Gameplay.Characters.Enemy
         [SerializeField] private SphereCollider _damageTrigger;
         [SerializeField] private EntityUI _entityUI;
 
+        private Transform _myTransform;
         private EnemyData _config;
         private NavMeshAgent _navAgent;
         private AnimatorProvider _animatorProvider;
         private AttackProvider _attackProvider;
         private Health _health;
         private ITarget _myTarget;
-        private StunProvider _stunProvider;
         private List<BaseEnemyState> _allStates;
         private BaseEnemyState _currentState;
         private int _generation;
         private bool _isInit;
         private CapsuleCollider _collider;
 
+        private const int MIN_AVOIDANCE_PRIORITY = 50;
+
         public event Action<EnemyAgent> DieEvent;
+        public event Action OnStunnedEvent;
 
 
         public void Init(EnemyData config)
@@ -54,6 +57,7 @@ namespace Gameplay.Characters.Enemy
             if (!_isInit)
             {
                 _config = config;
+                _myTransform = transform;
                 _navAgent = GetComponent<NavMeshAgent>();
 
                 GetComponent<Rigidbody>().isKinematic = true;
@@ -65,8 +69,6 @@ namespace Gameplay.Characters.Enemy
 
                 _health = new Health(_config.StartHealth);
                 _health.ChangeHealthEvent += OnHealthChange;
-
-                _stunProvider = new StunProvider();
 
                 _attackProvider = new AttackProvider(_config.Attack, _damageTrigger);
                 
@@ -93,7 +95,7 @@ namespace Gameplay.Characters.Enemy
             
             _navAgent.enabled = true;
             _navAgent.Warp(transform.position);
-            _navAgent.avoidancePriority = 50 + Random.Range(1, 49); // 99 max
+            _navAgent.avoidancePriority = MIN_AVOIDANCE_PRIORITY + Random.Range(1, 49); // 99 max
             
             _currentState = _allStates[0];
 
@@ -136,11 +138,19 @@ namespace Gameplay.Characters.Enemy
             StopHunt();
         }
 
-        
+        void IEnemyAgent.UpdateNavigationPriority()
+        {
+            var distToTarget = (_navAgent.destination - _myTransform.position).magnitude;
+            var value = Mathf.InverseLerp(10f, _navAgent.stoppingDistance, distToTarget) * 50f;
+            _navAgent.avoidancePriority = Mathf.Clamp(MIN_AVOIDANCE_PRIORITY + (int)value, 1, 99);
+        }
+
+
         void IEnemyAgent.RotateViewToTarget(Vector3 lookTarget)
         {
-            var dir = lookTarget - transform.position;
-            _viewBody.rotation = Util.Vector3Math.DirToQuaternion(dir);
+            var dir = lookTarget - _myTransform.position;
+            var newRot = Util.Vector3Math.DirToQuaternion(dir);
+            _viewBody.DORotateQuaternion(newRot, 1f);
         }
         
         
@@ -153,7 +163,7 @@ namespace Gameplay.Characters.Enemy
         void IDamage.TryApplyDamage(int damage, float stunTime)
         {
             _health.ApplyDamage(damage);
-            _stunProvider.SetStun(stunTime);
+            OnStunnedEvent?.Invoke();
         }
 
 

@@ -23,13 +23,16 @@ namespace Gameplay.Player
         private bool _isActive;
 
         public event Action LossEvent;
-
+        public event Action<float> HeroHealthChangeEvent;
+        
 
         public PlayerController(PlayerData config, HeroController hero, ICameraController cameraController)
         {
             _config = config;
-            _hero = hero;
             _cameraController = cameraController;
+            
+            _hero = hero;
+            _hero.HealthChangeEvent += (progress) => HeroHealthChangeEvent?.Invoke(progress);
             
             _allStates =  new List<BasePlayerState>()
             {

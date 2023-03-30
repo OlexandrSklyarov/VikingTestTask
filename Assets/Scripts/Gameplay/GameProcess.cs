@@ -8,29 +8,27 @@ using Gameplay.EntityManager;
 using Gameplay.Environment.Items;
 using Gameplay.Factories;
 using Gameplay.Player;
-using Gameplay.UI;
 using UnityEngine;
 
 namespace Gameplay
 {
-    public class GameProcess
+    public class GameProcess : IGameProcessInfo
     {
         private readonly MainConfig _config;
-        private readonly IUIController _uiController;
         private readonly ICameraController _cameraController;
         private readonly PlayerController _playerController;
         private readonly EnemyManager _enemyManager;
         private readonly InputAdaptor _inputAdaptor;
         private readonly GameEntityManager _entityManager;
 
+        public event Action<int> ChangeScoreEvent;
+        public event Action<float> HeroChangeHealthEvent;
         public event Action GameCompletedEvent;
         
 
-        public GameProcess(MainConfig config, IUIController uiController, Transform playerSpawnPoint, 
-            ICameraController cameraController)
+        public GameProcess(MainConfig config, Transform playerSpawnPoint, ICameraController cameraController)
         {
             _config = config;
-            _uiController = uiController;
             _cameraController = cameraController;
 
             _entityManager = new GameEntityManager();
@@ -40,9 +38,13 @@ namespace Gameplay
             var hero = SpawnHero(playerSpawnPoint, _inputAdaptor);
 
             _playerController = new PlayerController(_config.Player, hero, cameraController);
+            _playerController.HeroHealthChangeEvent += (hpProgress) => HeroChangeHealthEvent?.Invoke(hpProgress);
             _playerController.LossEvent += OnHeroLoss;
 
             _enemyManager = new EnemyManager(_config.EnemyManager, hero, GetEnemyFactory(), GetEnergyLootFactory());
+            _enemyManager.DieEntityEvent += (count) => ChangeScoreEvent?.Invoke(count);
+            
+            _inputAdaptor.Enable();
         }
 
         
@@ -98,8 +100,6 @@ namespace Gameplay
 
         public void StartProcess()
         {
-            _cameraController.ActiveCamera(CameraController.CameraType.STARTUP);
-            _inputAdaptor.Enable();
             _playerController?.Enable();
             _enemyManager?.StartSpawn();
         }
@@ -107,7 +107,7 @@ namespace Gameplay
         
         public void StopProcess()
         {
-            _inputAdaptor.Disable();
+            _inputAdaptor?.Disable();
             _playerController?.Disable();
             _enemyManager?.Stop();
         }
@@ -121,6 +121,7 @@ namespace Gameplay
 
         private void OnHeroLoss()
         {
+            Util.Debug.PrintColor($"Game end", Color.red);
             _playerController.LossEvent -= OnHeroLoss;
             GameCompletedEvent?.Invoke();
         }
