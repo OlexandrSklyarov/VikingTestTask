@@ -1,15 +1,43 @@
+using System;
+using System.Linq;
+using Gameplay.UI.Screens;
 using UnityEngine;
 
 namespace Gameplay.UI
 {
-    public class GameUIController : MonoBehaviour, IUIController
+    public class GameUIController : MonoBehaviour, IGameUIController
     {
-        public void Init(){}
-    
-    
-        void IUIController.ShowScreen(ScreenType screenType)
+        private BaseGameScreen[] _allScreens;
+        
+        public event Action ClickPlayButtonEvent;
+        public event Action ClickRestartButtonEvent;
+        public event Action ClickExitButtonEvent;
+        
+        
+        public void Init(IGameProcessInfo gameInfo)
         {
-            Debug.Log($"Show screen {screenType}");
+            _allScreens = GetComponentsInChildren<BaseGameScreen>();
+            Array.ForEach(_allScreens, s => s.Init(gameInfo, this));
         }
+    
+    
+        public void ShowScreen(ScreenType screenType)
+        {
+            Array.ForEach(_allScreens, s => s.Hide());
+            var screen = _allScreens.FirstOrDefault(s => s.Type == screenType);
+            
+            if (screen == null) return;
+            
+            screen.Show();
+        }
+        
+
+        void IGameUIController.Play() => ClickPlayButtonEvent?.Invoke();
+        
+
+        void IGameUIController.Restart() => ClickRestartButtonEvent?.Invoke();
+        
+
+        void IGameUIController.Exit() => ClickExitButtonEvent?.Invoke();
     }
 }

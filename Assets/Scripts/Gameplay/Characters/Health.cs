@@ -34,7 +34,6 @@ namespace Gameplay.Characters
         {
             if (damage < 0) throw new ArgumentException($"Damage {damage} < 0!!!");
             CurrentHP -= damage;
-            Util.Debug.PrintColor($"{CurrentHP}", Color.yellow);
         }
 
 

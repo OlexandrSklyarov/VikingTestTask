@@ -3,6 +3,7 @@ using Gameplay.Cameras;
 using Gameplay.Environment.Tags;
 using Gameplay.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Gameplay
 {
@@ -32,22 +33,50 @@ namespace Gameplay
             _gameProcess = new GameProcess
             (
                 _mainConfig, 
-                _uiController,
                 _heroSpawnPoint,
                 _cameraController
             );
+            
+            _cameraController.ActiveCamera(CameraController.CameraType.STARTUP);
+
+            _uiController.Init(_gameProcess);
+            _uiController.ClickPlayButtonEvent += OnPlayHandler;
+            _uiController.ClickRestartButtonEvent += OnRestartHandler;
+            _uiController.ClickExitButtonEvent += OnExitHandler;
+            _uiController.ShowScreen(ScreenType.MAIN_MENU);
 
             _gameProcess.GameCompletedEvent += OnGameCompleted;
-            _gameProcess.StartProcess();
+            
             _isRunning = true;
         }
 
         
+        private void OnPlayHandler()
+        {
+            _uiController.ShowScreen(ScreenType.HUD);
+            _gameProcess.StartProcess();
+        }
+
+        
+        private void OnRestartHandler()
+        {
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        }
+
+        
+        private void OnExitHandler()
+        {
+            Application.Quit();
+        }
+
+
         private void OnGameCompleted()
         {
             _gameProcess.GameCompletedEvent -= OnGameCompleted;
             _gameProcess.StopProcess();
             _isRunning = false;
+
+            _uiController.ShowScreen(ScreenType.LOSS);
         }
 
         

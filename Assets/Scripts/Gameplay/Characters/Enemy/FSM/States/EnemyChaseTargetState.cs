@@ -11,21 +11,19 @@ namespace Gameplay.Characters.Enemy.FSM.States
         public override void OnStart()
         {
             _agent.Stop();
-            _agent.StunProvider.OnStunnedEvent += Stun;
+            _agent.OnStunnedEvent += Stun;
         }
       
 
         public override void OnStop()
         {
             _agent.Stop();
-            _agent.StunProvider.OnStunnedEvent -= Stun;
+            _agent.OnStunnedEvent -= Stun;
         }
 
 
         public override void OnUpdate()
         {
-            if (_agent.StunProvider.IsStunned()) return;
-         
             if (!IsExist())
             {
                 Wait();
@@ -60,6 +58,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
             _agent.NavAgent.SetDestination(_agent.MyTarget.MyTransform.position);
             _agent.AnimatorProvider.SetSpeed(Mathf.Clamp01(_agent.NavAgent.velocity.magnitude));
             _agent.RotateViewToDirection(_agent.NavAgent.velocity);
+            _agent.UpdateNavigationPriority();
         }
 
 

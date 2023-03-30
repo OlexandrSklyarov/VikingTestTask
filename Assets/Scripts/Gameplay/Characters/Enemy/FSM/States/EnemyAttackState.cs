@@ -9,7 +9,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            _agent.StunProvider.OnStunnedEvent += Stun;
+            _agent.OnStunnedEvent += Stun;
             _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHandler;
             
             _agent.Stop();
@@ -20,7 +20,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStop()
         {
-            _agent.StunProvider.OnStunnedEvent -= Stun;
+            _agent.OnStunnedEvent -= Stun;
             _agent.AnimatorProvider.AttackEvent -= OnAttackExecuteHandler;
         }
 
@@ -33,15 +33,13 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnUpdate()
         {
-            if (_agent.StunProvider.IsStunned()) return;
-            
             if (IsTargetNotExistOrFar())
             {
                 Wait();
                 return;
             }
             
-            if (_agent.AttackProvider.IsCanAttack())
+            if (!_agent.AnimatorProvider.IsPlayAttack())
             {
                 _agent.RotateViewToTarget(_agent.MyTarget.MyTransform.position);
                 _agent.AnimatorProvider.PlayAttack();
@@ -53,7 +51,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
         private bool IsTargetNotExistOrFar()
         {
             return IsTargetNotExist() ||
-                   (IsTargetFar() && !_agent.AttackProvider.IsAttackActive);
+                   (IsTargetFar() && !_agent.AnimatorProvider.IsPlayAttack());
         }
 
         private bool IsTargetNotExist()

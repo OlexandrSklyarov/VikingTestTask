@@ -11,7 +11,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            _agent.StunProvider.OnStunnedEvent += Stun;
+            _agent.OnStunnedEvent += Stun;
             
             _isDie = false;
             _agent.Stop();
@@ -21,7 +21,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
         
         public override void OnStop()
         {
-            _agent.StunProvider.OnStunnedEvent -= Stun;
+            _agent.OnStunnedEvent -= Stun;
         }
 
         private void Stun()
@@ -40,9 +40,9 @@ namespace Gameplay.Characters.Enemy.FSM.States
         {
             if (_isDie) return;
             
-            if (!_agent.StunProvider.IsStunned())
+            if (!_agent.AnimatorProvider.IsPlayDamage())
             {
-                _context.SwitchState<EnemyChaseTargetState>();
+                _context.SwitchState<EnemyWaitState>();
             }
         }
     }

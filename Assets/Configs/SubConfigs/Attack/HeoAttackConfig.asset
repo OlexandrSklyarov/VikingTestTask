@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 1
   <StunTime>k__BackingField: 2
-  <AttackDelay>k__BackingField: 2
+  <AttackDelay>k__BackingField: 1
+  <ViewTargetRadius>k__BackingField: 3
   <TargetLayerMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 128

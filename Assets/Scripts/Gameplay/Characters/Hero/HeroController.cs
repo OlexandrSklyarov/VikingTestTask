@@ -26,12 +26,12 @@ namespace Gameplay.Characters.Hero
         private InputAdaptor _inputAdaptor;
         private AnimatorProvider _animatorProvider;
         private AttackProvider _attackProvider;
-        private StunProvider _stunProvider;
         private Transform _myTransform;
         private bool _isInit;
         private bool _isAlive;
 
         public event Action DieEvent;
+        public event Action<float> HealthChangeEvent;
         
 
         public void Init(HeroData config, InputAdaptor inputAdaptor)
@@ -67,8 +67,6 @@ namespace Gameplay.Characters.Hero
 
             _attackProvider = new AttackProvider(_config.Attack, _damageTrigger);
 
-            _stunProvider = new StunProvider();
-
             _isAlive = true;
             _isInit = true;
         }
@@ -76,7 +74,6 @@ namespace Gameplay.Characters.Hero
         
         private void OnAttackExecute()
         {
-            Debug.Log("Check hit");
             _attackProvider.ApplyDamage();
         }
 
@@ -89,7 +86,7 @@ namespace Gameplay.Characters.Hero
 
         private void OnMovementHandler(Vector2 dir)
         {
-            if (_stunProvider.IsStunned()) 
+            if (_animatorProvider.IsPlayDamage()) 
                 ResetDirection();
             else
                 _engine?.SetDirection(dir);
@@ -98,7 +95,7 @@ namespace Gameplay.Characters.Hero
 
         private void OnAttackHandler()
         {
-            if (!_attackProvider.IsCanAttack()) return;
+            if (_animatorProvider.IsPlayAttack()) return;
 
             _attackProvider.StartAttack();
             _animatorProvider.PlayAttack();
@@ -124,7 +121,6 @@ namespace Gameplay.Characters.Hero
 
         private void OnHealthIsOver(int hp)
         {
-            Debug.Log($"hp is over{hp}");
             _animatorProvider.PlayDie();
             _isAlive = false;
             DieEvent?.Invoke();
@@ -133,15 +129,15 @@ namespace Gameplay.Characters.Hero
 
         private void OnHealthChange(int hp)
         {
-            Debug.Log($"hp {hp}");
+            HealthChangeEvent?.Invoke((float)hp / _health.MaxHP);
         }
 
 
         void IHero.OnFixedUpdate()
         {
             if (!_isInit) return;
-            if (_stunProvider.IsStunned()) return;
-            if (_attackProvider.IsAttackActive) return;
+            if (_animatorProvider.IsPlayDamage()) return;
+            if (_animatorProvider.IsPlayAttack()) return;
 
             _engine.OnFixedUpdate();
         }
@@ -150,8 +146,8 @@ namespace Gameplay.Characters.Hero
         void IHero.OnUpdate()
         {
             if (!_isInit) return;
-            if (_stunProvider.IsStunned()) return;
-            if (_attackProvider.IsAttackActive) return;
+            if (_animatorProvider.IsPlayDamage()) return;
+            if (_animatorProvider.IsPlayAttack()) return;
 
             _engine.OnUpdate();
             _animatorProvider.SetSpeed(_engine.CurrentSpeed);
@@ -173,7 +169,6 @@ namespace Gameplay.Characters.Hero
             _health.ApplyDamage(damage);
             _animatorProvider.PlayDamage();
             ResetDirection();
-            _stunProvider.SetStun(stunTime);
         }
     }
 }

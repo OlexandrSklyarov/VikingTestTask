@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Common.Routine;
@@ -5,6 +6,8 @@ using Data;
 using Gameplay.Environment.Items;
 using Gameplay.Factories;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Gameplay.Characters.Enemy
@@ -16,6 +19,9 @@ namespace Gameplay.Characters.Enemy
         private readonly EntityFactory<EnergyItem> _lootFactory;
         private readonly List<EnemyAgent> _enemies;
         private readonly EnemyManagerData _config;
+        private int _dieCount;
+
+        public event Action<int> DieEntityEvent;
 
 
         public EnemyManager(EnemyManagerData config, ITarget targetHero, EnemyFactory factory, EntityFactory<EnergyItem> lootFactory)
@@ -40,6 +46,7 @@ namespace Gameplay.Characters.Enemy
             for (int i = 0; i < count; i++)
             {
                 var enemy = _factory.Get(EnemyType.SIMPLE_MUTANT);
+                
                 enemy.transform.position = GetRandomPosition(_targetHero.MyTransform);
                 enemy.DieEvent += OnEnemyDieHandler;
                 enemy.Init(_config.Enemy);
@@ -52,15 +59,19 @@ namespace Gameplay.Characters.Enemy
         }
         
 
-        private Vector3 GetRandomPosition(Transform targetHero)
+        private  Vector3 GetRandomPosition(Transform targetHero)
         {
-            var offset = Random.insideUnitSphere * _config.SpawnRadius.Max;
-            if (offset.magnitude < _config.SpawnRadius.Min) offset = offset.normalized * _config.SpawnRadius.Min;
+            var rndDir = Random.insideUnitSphere * _config.SpawnRadius.Max;
+            rndDir.y = 0f;
+            if (rndDir.magnitude < _config.SpawnRadius.Min) rndDir = rndDir.normalized * _config.SpawnRadius.Min;
+            var spawnPos = targetHero.position + rndDir;
             
-            var pos = targetHero.position + offset;
-            
-            pos.y = targetHero.position.y;
-            return pos;
+            if (NavMesh.SamplePosition(spawnPos, out var hit, _config.SpawnRadius.Max * 2f, 1))
+            {
+                spawnPos = hit.position;
+            }
+
+            return spawnPos;
         }
 
 
@@ -77,6 +88,9 @@ namespace Gameplay.Characters.Enemy
                 var count = _config.MinEnemyCount - _enemies.Count;
                 RoutineManager.Run(SpawnEnemy(count));
             }
+
+            _dieCount++;
+            DieEntityEvent?.Invoke(_dieCount);
         }
 
         

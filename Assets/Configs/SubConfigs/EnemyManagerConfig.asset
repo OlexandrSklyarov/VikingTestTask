@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: EnemyManagerConfig
   m_EditorClassIdentifier: 
   <SpawnRadius>k__BackingField:
-    _min: 2
-    _max: 10
+    _min: 10
+    _max: 15
   <MinEnemyCount>k__BackingField: 10
   <Enemy>k__BackingField: {fileID: 11400000, guid: 39baa9f8dcca6d48d88c9bfc8c3e1203,
     type: 2}
