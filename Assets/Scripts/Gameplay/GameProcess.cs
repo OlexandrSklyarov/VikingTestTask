@@ -38,15 +38,22 @@ namespace Gameplay
             var hero = SpawnHero(playerSpawnPoint, _inputAdaptor);
 
             _playerController = new PlayerController(_config.Player, hero, cameraController);
-            _playerController.HeroHealthChangeEvent += (hpProgress) => HeroChangeHealthEvent?.Invoke(hpProgress);
+            _playerController.HeroHealthChangeEvent += ChangeHeroHealth;
             _playerController.LossEvent += OnHeroLoss;
 
             _enemyManager = new EnemyManager(_config.EnemyManager, hero, GetEnemyFactory(), GetEnergyLootFactory());
-            _enemyManager.DieEntityEvent += (count) => ChangeScoreEvent?.Invoke(count);
+            _enemyManager.DieEntityEvent += ChangeScore;
             
             _inputAdaptor.Enable();
         }
 
+        private void ChangeHeroHealth(float hpProgress)
+        {
+            HeroChangeHealthEvent?.Invoke(hpProgress);
+        }
+
+
+        private  void ChangeScore(int value) => ChangeScoreEvent?.Invoke(value);
         
         private EnemyFactory GetEnemyFactory()
         {
@@ -100,6 +107,7 @@ namespace Gameplay
 
         public void StartProcess()
         {
+            ChangeScoreEvent(0);
             _playerController?.Enable();
             _enemyManager?.StartSpawn();
         }
