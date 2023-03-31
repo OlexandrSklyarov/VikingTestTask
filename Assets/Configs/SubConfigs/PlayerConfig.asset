@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded8f52f779b4faca30296f06893f78c, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
+  <StarBattleDelay>k__BackingField: 1
