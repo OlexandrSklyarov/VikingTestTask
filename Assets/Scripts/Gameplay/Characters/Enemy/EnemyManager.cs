@@ -7,7 +7,6 @@ using Gameplay.Environment.Items;
 using Gameplay.Factories;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Gameplay.Characters.Enemy
@@ -97,7 +96,8 @@ namespace Gameplay.Characters.Enemy
         private void SpawnLoot(Vector3 pos)
         {
             var loot = _lootFactory.GetItem();
-            loot.transform.position = pos + Vector3.up;;
+            loot.transform.position = pos + Vector3.up;
+            loot.Init(_lootFactory);
         }
 
 

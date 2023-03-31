@@ -7,8 +7,8 @@ using UnityEngine;
 
 namespace Gameplay.Characters.Hero
 {
-    [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
-    public class HeroController : MonoBehaviour, IHero, IDamage, ITarget
+    [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(HeroInteractController))]
+    public class HeroController : MonoBehaviour, IHero, IDamage, ITarget, IHeroInteract
     {
         bool IDamage.IsAlive => _isAlive;
         bool ITarget.IsAlive => _isAlive;
@@ -67,6 +67,8 @@ namespace Gameplay.Characters.Hero
             _animatorProvider.AttackEvent += OnAttackExecute;
 
             _attackProvider = new AttackProvider(_config.Attack, _damageTrigger);
+            
+            GetComponent<HeroInteractController>().Init(this);
 
             _isAlive = true;
             _isInit = true;
@@ -170,6 +172,12 @@ namespace Gameplay.Characters.Hero
             _health.ApplyDamage(damage);
             _animatorProvider.PlayDamage();
             ResetDirection();
+        }
+        
+
+        void IHeroInteract.AddHealth(int value)
+        {
+            _health.Heal(value);
         }
     }
 }
