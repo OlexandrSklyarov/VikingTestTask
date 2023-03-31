@@ -57,17 +57,17 @@ namespace Gameplay.Characters.Attack
             var count = FindTargetsInRadius(pos, _config.ViewTargetRadius, _resultColliders, _config.TargetLayerMask);
             if (count <= 0) return;
 
-            var cols = _resultColliders
+            var damageUnits = _resultColliders
                 .Take(count)
                 .Where(c => c != null)
                 .Select(c => c.GetComponent<IDamage>())
-                .Where(c => c != null)
+                .Where(c => c != null && c.IsAlive)
                 .OrderBy(c => (c.Position - pos).sqrMagnitude)
                 .OrderBy(c => Vector3.Angle(lookDirection, c.Position - pos));
 
-            if (!cols.Any()) return;
+            if (!damageUnits.Any()) return;
             
-            successCallback?.Invoke(cols.First().Position);
+            successCallback?.Invoke(damageUnits.First().Position);
         }
     }
 }
