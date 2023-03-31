@@ -18,6 +18,7 @@ namespace Gameplay.Characters.Enemy
     [RequireComponent(typeof(NavMeshAgent),  typeof(CapsuleCollider), typeof(Rigidbody))]
     public class EnemyAgent : MonoBehaviour, IDamage, IEnemyAgent, IEnemyContextSwitcher
     {
+        bool IDamage.IsAlive => _isAlive;
         public EnemyType Type => _type;
         float IEnemyAgent.AttackRange => _navAgent.radius * 4f;
         Vector3 IDamage.Position => _myTransform.position;
@@ -42,9 +43,10 @@ namespace Gameplay.Characters.Enemy
         private ITarget _myTarget;
         private List<BaseEnemyState> _allStates;
         private BaseEnemyState _currentState;
-        private int _generation;
-        private bool _isInit;
         private CapsuleCollider _collider;
+        private int _generation;
+        private bool _isAlive;
+        private bool _isInit;
 
         private const int MIN_AVOIDANCE_PRIORITY = 50;
 
@@ -89,7 +91,7 @@ namespace Gameplay.Characters.Enemy
             
             _collider.enabled = true;
                 
-            _health.Reset(_config.StartHealth + _generation);
+            _health.SetValue(_config.StartHealth + _generation);
             
             _generation++;
             
@@ -99,6 +101,7 @@ namespace Gameplay.Characters.Enemy
             
             _currentState = _allStates[0];
 
+            _isAlive = true;
             _isInit = true;
         }
 
@@ -133,6 +136,7 @@ namespace Gameplay.Characters.Enemy
         
         void IEnemyAgent. PrepareForDie()
         {
+            _isAlive = false;
             _entityUI.Hide();
             _collider.enabled = false;
             StopHunt();
@@ -162,6 +166,8 @@ namespace Gameplay.Characters.Enemy
 
         void IDamage.TryApplyDamage(int damage, float stunTime)
         {
+            if (!_isAlive) return;
+            
             _health.ApplyDamage(damage);
             OnStunnedEvent?.Invoke();
         }

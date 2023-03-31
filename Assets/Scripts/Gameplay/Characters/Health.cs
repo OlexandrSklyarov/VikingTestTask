@@ -12,7 +12,7 @@ namespace Gameplay.Characters
             get => _hp;
             private set
             {
-                _hp = Mathf.Max(0, value);
+                _hp = Mathf.Clamp(value, 0, MaxHP);
                 ChangeHealthEvent?.Invoke(_hp);
                 if (_hp <= 0) HealthZeroEvent?.Invoke(_hp);
             }
@@ -26,7 +26,8 @@ namespace Gameplay.Characters
         
         public Health(int startHealth)
         {
-            Reset(startHealth);
+            if (startHealth < 0) throw new ArgumentException($"Start health {startHealth} < 0!!!");
+            SetValue(startHealth);
         }
 
 
@@ -44,11 +45,10 @@ namespace Gameplay.Characters
         }
         
 
-        public void Reset(int startHealth)
+        public void SetValue(int startHealth)
         {
             if (startHealth < 0) throw new ArgumentException($"Start health {startHealth} < 0!!!");
-            CurrentHP = startHealth;
-            MaxHP = startHealth;
+            CurrentHP = MaxHP = startHealth;
         }
     }
 }

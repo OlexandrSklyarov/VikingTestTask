@@ -14,7 +14,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
             
             _agent.Stop();
 
-            if (IsTargetNotExist()) Wait();
+            if (IsTargetNotExist() || _agent.AnimatorProvider.IsPlayDamage()) Wait();
         }
         
 

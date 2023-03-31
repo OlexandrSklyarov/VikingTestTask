@@ -10,6 +10,7 @@ namespace Gameplay.Characters.Hero
     [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
     public class HeroController : MonoBehaviour, IHero, IDamage, ITarget
     {
+        bool IDamage.IsAlive => _isAlive;
         bool ITarget.IsAlive => _isAlive;
         Vector3 IDamage.Position => transform.position;
         Transform ITarget.MyTransform => _myTransform;
