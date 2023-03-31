@@ -8,4 +8,10 @@ public static class ConstPrm
         public const string DAMAGE = "DAMAGE";
         public const string DIE = "DIE";
     }
+
+
+    public static class PrefsData
+    {
+        public const string GAME_RESTART_FLAG = "GAME_RESTART_FLAG";
+    }
 }

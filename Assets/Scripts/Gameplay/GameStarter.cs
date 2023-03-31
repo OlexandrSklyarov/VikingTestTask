@@ -46,8 +46,12 @@ namespace Gameplay
             _uiController.ShowScreen(ScreenType.MAIN_MENU);
 
             _gameProcess.GameCompletedEvent += OnGameCompleted;
-            
-            _isRunning = true;
+
+            if (SaveDataProvider.IsGameRestarted)
+            {
+                SaveDataProvider.SetGameRestarted(false);
+                OnPlayHandler();
+            }
         }
 
         
@@ -55,11 +59,13 @@ namespace Gameplay
         {
             _uiController.ShowScreen(ScreenType.HUD);
             _gameProcess.StartProcess();
+            _isRunning = true;
         }
 
         
         private void OnRestartHandler()
         {
+            SaveDataProvider.SetGameRestarted(true);
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
         }
 
