@@ -39,8 +39,7 @@ namespace Gameplay.Characters.Hero
             _cameraTargetYaw = ClampAngle(_cameraTargetYaw, float.MinValue, float.MaxValue);
             _cameraTargetPitch = ClampAngle(_cameraTargetPitch, _config.BottomClamp, _config.TopClamp);
 
-            _cameraFollowTarget.rotation = Quaternion.Euler(
-                    _cameraTargetPitch + _config.AngleOverride,_cameraTargetYaw, 0.0f);
+            _cameraFollowTarget.rotation = Quaternion.Euler(_cameraTargetPitch, _cameraTargetYaw, 0.0f);
         }
 
         

@@ -27,6 +27,7 @@ namespace Gameplay.Characters.Hero
         private InputAdaptor _inputAdaptor;
         private AnimatorProvider _animatorProvider;
         private AttackProvider _attackProvider;
+        private HeroViewBodyController _viewBodyController;
         private Transform _myTransform;
         private bool _isInit;
         private bool _isAlive;
@@ -48,14 +49,9 @@ namespace Gameplay.Characters.Hero
             _health.ChangeHealthEvent += OnHealthChange;
             _health.HealthZeroEvent += OnHealthIsOver;
 
-            _engine = new RigidbodyEngine
-            (
-                _config.Engine,
-                GetComponent<Rigidbody>(),
-                _viewBody
-            );
-            
+            _engine = new RigidbodyEngine(_config.Engine, GetComponent<Rigidbody>(), _cameraFollowTarget);
             _cameraLookProvider = new CameraLookRotateProvider(_config.Camera, _cameraFollowTarget);
+            _viewBodyController = new HeroViewBodyController(_config.View, _viewBody);
 
             _inputAdaptor.OnMovement += OnMovementHandler;
             _inputAdaptor.OnLook += OnLookHandler;
@@ -108,16 +104,10 @@ namespace Gameplay.Characters.Hero
             (
                 _myTransform.position,
                 _viewBody.forward,
-                RotateViewToTarget
+                (target) => _viewBodyController.RotateViewToTarget(target)
             );
         }
        
-        private void RotateViewToTarget(Vector3 lookTarget)
-        {
-            var dir = lookTarget - transform.position;
-            _viewBody.rotation = Util.Vector3Math.DirToQuaternion(dir);
-        }
-
 
         private void ResetDirection() => _engine?.SetDirection(Vector2.zero);
 
@@ -154,6 +144,7 @@ namespace Gameplay.Characters.Hero
 
             _engine.OnUpdate();
             _animatorProvider.SetSpeed(_engine.CurrentSpeed);
+            _viewBodyController.RotateViewToDirection(_engine.Velocity);
         }
 
         

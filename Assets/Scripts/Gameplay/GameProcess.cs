@@ -107,6 +107,9 @@ namespace Gameplay
 
         public void StartProcess()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            
             ChangeScoreEvent(0);
             _playerController?.Enable();
             _enemyManager?.StartSpawn();
@@ -115,6 +118,9 @@ namespace Gameplay
         
         public void StopProcess()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            
             _inputAdaptor?.Disable();
             _playerController?.Disable();
             _enemyManager?.Stop();

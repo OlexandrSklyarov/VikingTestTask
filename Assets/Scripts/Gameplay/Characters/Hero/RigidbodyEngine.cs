@@ -5,67 +5,67 @@ namespace Gameplay.Characters.Hero
 {
     public class RigidbodyEngine
     {
+        public float CurrentSpeed => (_inputDirection.sqrMagnitude > 0.01f) ? 1f : 0f;
+        public Vector3 Velocity => _rb.velocity;
+        
         private readonly Rigidbody _rb;
         private readonly HeroEngine _config;
         private readonly Transform _myTransform;
-        private readonly Transform _mainCamera;
-        private readonly Transform _viewBody;
+        private readonly Transform _orientation;
 
-        private Vector3 _moveDirection;
+        private Vector3 _inputDirection;
         private Vector3 _smoothVelocity;
+        private bool _isGrounded;
 
 
-        public RigidbodyEngine(HeroEngine config, Rigidbody rb, Transform viewBody)
+        public RigidbodyEngine(HeroEngine config, Rigidbody rb, Transform orientation)
         {
             _config = config;
+            _orientation = orientation;
             _rb = rb;
-            _viewBody = viewBody;
             _myTransform = _rb.transform;
-            _mainCamera = Camera.main.transform;
+            _rb.freezeRotation = true;
         }
 
-        public float CurrentSpeed => (_moveDirection.sqrMagnitude > 0.01f) ? 1f : 0f;
-
-
-        public void SetDirection(Vector2 inputDir)
-        {
-            var dir = (inputDir != Vector2.zero) ? new Vector3(inputDir.x, 0f, inputDir.y) : Vector3.zero;
-            _moveDirection = _mainCamera.TransformDirection(dir);
-        }
+        
+        public void SetDirection(Vector2 inputDir) => _inputDirection = inputDir;
 
         
         public void OnFixedUpdate() => MoveBody();
 
 
-        public void OnUpdate() => RotateBody();
+        public void OnUpdate()
+        {
+            SpeedLimited();
+            GroundCheckProcess();
+        }
 
+        
+        private void SpeedLimited()
+        {
+            var curVelocity = _rb.velocity;
+            var horVelocity = new Vector3(curVelocity.x, 0f, curVelocity.z);
+            
+            if (horVelocity.sqrMagnitude <= _config.Speed * _config.Speed) return;
+
+            var limitedVelocity = horVelocity.normalized * _config.Speed;
+            _rb.velocity = new Vector3(limitedVelocity.x, curVelocity.y, limitedVelocity.z);
+        }
+
+
+        private void GroundCheckProcess()
+        {
+             _isGrounded = Physics.Raycast(_myTransform.position, Vector3.down, 
+                 _config.GroundCheckDistance, _config.GroundLayerMask);
+            
+             _rb.drag = (_isGrounded) ? _config.GroundDrag : 0f;
+        }
+
+        
         private void MoveBody()
         {
-            var pos = _myTransform.position;
-            var targetPos = pos + _config.Speed * Time.deltaTime * _moveDirection;
-            
-            _rb.MovePosition(Vector3.SmoothDamp
-            (
-                pos,
-                targetPos,
-                ref _smoothVelocity,
-                _config.SmoothMovementTime
-            ));
-        }
-        
-        
-        private void RotateBody()
-        {
-            if (_moveDirection == Vector3.zero) return;
-
-            var angle = Mathf.Atan2(_moveDirection.x, _moveDirection.z) * Mathf.Rad2Deg;
-            
-            _viewBody.rotation = Quaternion.RotateTowards
-            (
-                _viewBody.rotation, 
-                Quaternion.Euler(0f, angle, 0f), 
-                _config.AngularSpeed *Time.deltaTime
-            );
+            var moveDirection = _orientation.forward * _inputDirection.y + _orientation.right * _inputDirection.x;
+            _rb.AddForce(moveDirection.normalized * _config.Speed * _config.SpeedMultiplier, ForceMode.Force);
         }
     }
 }
