@@ -38,5 +38,6 @@ namespace Data
     public class HeroView
     {
         [field: SerializeField, Min(0.001f)] public float AngularSpeed  { get; private set; } = 360f;
+        [field: SerializeField, Min(0.001f)] public float MinVelocityThreshold  { get; private set; } = 0.2f;
     }
 }

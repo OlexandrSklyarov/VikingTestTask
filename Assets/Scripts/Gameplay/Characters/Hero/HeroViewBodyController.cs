@@ -23,11 +23,11 @@ namespace Gameplay.Characters.Hero
         }
 
 
-        public void RotateViewToDirection(Vector3 dir)
+        public void RotateViewToDirection(Vector3 velocity)
         {
-            if (dir == Vector3.zero) return;
+            if (velocity.sqrMagnitude <= _config.MinVelocityThreshold * _config.MinVelocityThreshold) return;
                 
-            var angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+            var angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
                 
             _viewBody.rotation = Quaternion.RotateTowards
             (

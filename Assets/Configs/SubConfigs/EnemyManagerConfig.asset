@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <SpawnRadius>k__BackingField:
     _min: 10
-    _max: 15
-  <MinEnemyCount>k__BackingField: 10
+    _max: 20
+  <MinEnemyCount>k__BackingField: 1
   <Enemy>k__BackingField: {fileID: 11400000, guid: 39baa9f8dcca6d48d88c9bfc8c3e1203,
     type: 2}

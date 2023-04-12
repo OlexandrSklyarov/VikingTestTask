@@ -3,16 +3,19 @@ namespace Gameplay.Characters.Enemy.FSM.States
 {
     public class EnemyAttackState : BaseEnemyState
     {
+        private int _defaultPriority;
+
         public EnemyAttackState(IEnemyContextSwitcher context, IEnemyAgent agent) : base(context, agent)
         {
         }
 
         public override void OnStart()
         {
+            _defaultPriority = _agent.NavAgent.avoidancePriority;
+            _agent.NavAgent.avoidancePriority = _agent.Config.MaxAgentPriority;
+            
             _agent.OnStunnedEvent += Stun;
             _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHandler;
-            
-            _agent.Stop();
 
             if (IsTargetNotExist() || _agent.AnimatorProvider.IsPlayDamage()) Wait();
         }
@@ -20,6 +23,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStop()
         {
+            _agent.NavAgent.avoidancePriority = _defaultPriority;
             _agent.OnStunnedEvent -= Stun;
             _agent.AnimatorProvider.AttackEvent -= OnAttackExecuteHandler;
         }
@@ -33,7 +37,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnUpdate()
         {
-            if (IsTargetNotExistOrFar())
+            if (!_agent.AnimatorProvider.IsPlayAttack() && IsTargetNotExistOrFar())
             {
                 Wait();
                 return;

@@ -4,14 +4,17 @@ namespace Gameplay.Characters.Enemy.FSM.States
 {
     public class EnemyChaseTargetState : BaseEnemyState
     {
+        private float _curSpeed;
+
         public EnemyChaseTargetState(IEnemyContextSwitcher context, IEnemyAgent agent) : base(context, agent)
         {
         }
 
         public override void OnStart()
         {
-            _agent.Stop();
             _agent.OnStunnedEvent += Stun;
+            _curSpeed = 0f;
+            _agent.Move();
         }
       
 
@@ -56,9 +59,14 @@ namespace Gameplay.Characters.Enemy.FSM.States
         private void MoveToTarget()
         {
             _agent.NavAgent.SetDestination(_agent.MyTarget.MyTransform.position);
-            _agent.AnimatorProvider.SetSpeed(Mathf.Clamp01(_agent.NavAgent.velocity.magnitude));
             _agent.RotateViewToDirection(_agent.NavAgent.velocity);
             _agent.UpdateNavigationPriority();
+
+            var normSpeed = Mathf.Clamp01(_agent.NavAgent.velocity.magnitude / _agent.Config.MaxSpeed);
+            
+            _curSpeed = Mathf.Lerp(_curSpeed, normSpeed, 
+                _agent.Config.ChangeSpeedTime * Time.deltaTime);
+            _agent.AnimatorProvider.SetSpeed(_curSpeed);
         }
 
 

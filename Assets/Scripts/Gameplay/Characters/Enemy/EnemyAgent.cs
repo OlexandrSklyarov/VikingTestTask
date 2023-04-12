@@ -96,6 +96,8 @@ namespace Gameplay.Characters.Enemy
             _generation++;
             
             _navAgent.enabled = true;
+            _navAgent.speed = _config.MaxSpeed;
+            _navAgent.angularSpeed = _config.MaxAngularSpeed;
             _navAgent.Warp(transform.position);
             _navAgent.avoidancePriority = MIN_AVOIDANCE_PRIORITY + Random.Range(1, 49); // 99 max
             
@@ -154,13 +156,18 @@ namespace Gameplay.Characters.Enemy
         {
             var dir = lookTarget - _myTransform.position;
             var newRot = Util.Vector3Math.DirToQuaternion(dir);
-            _viewBody.DORotateQuaternion(newRot, 1f);
+            _viewBody.DORotateQuaternion(newRot, 2f);
         }
         
         
         void IEnemyAgent.RotateViewToDirection(Vector3 dir)
         {
-            _viewBody.rotation = Util.Vector3Math.DirToQuaternion(dir);
+            if (dir.sqrMagnitude <= _config.MinVelocity * _config.MinVelocity) return;
+            
+            _viewBody.rotation = Quaternion.RotateTowards(
+                _viewBody.rotation,
+                Util.Vector3Math.DirToQuaternion(dir),
+                _config.RotateViewSpeed * Time.deltaTime);
         }
         
 
@@ -176,9 +183,21 @@ namespace Gameplay.Characters.Enemy
         void IEnemyAgent.Stop()
         {
             if (_navAgent.enabled)
+            {
                 _navAgent.SetDestination(_navAgent.transform.position);
+                _navAgent.speed = 0f;
+            }
             
             _animatorProvider.SetSpeed(0f);
+        }
+        
+        
+        void IEnemyAgent.Move()
+        {
+            if (_navAgent.enabled)
+            {
+                _navAgent.speed = _config.MaxSpeed;
+            }
         }
 
         
@@ -188,7 +207,9 @@ namespace Gameplay.Characters.Enemy
             
             _currentState?.OnStop();
             _currentState = state;
-            _currentState?.OnStart();            
+            _currentState?.OnStart();
+
+            _entityUI.SetState(_currentState);
         }
 
         

@@ -14,7 +14,6 @@ namespace Gameplay.Characters.Enemy.FSM.States
             _agent.OnStunnedEvent += Stun;
             
             _isDie = false;
-            _agent.Stop();
             Stun();
         }
 

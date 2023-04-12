@@ -22,6 +22,7 @@ namespace Gameplay.Characters.Enemy.FSM
         void Die();
         void RotateViewToTarget(Vector3 lookTarget);
         void RotateViewToDirection(Vector3 dir);
+        void Move();
         void Stop();
         void PrepareForDie();
         void UpdateNavigationPriority();
