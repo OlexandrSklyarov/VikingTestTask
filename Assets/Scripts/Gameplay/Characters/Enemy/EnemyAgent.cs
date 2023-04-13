@@ -8,7 +8,6 @@ using Gameplay.Characters.Attack;
 using Gameplay.Characters.Enemy.FSM;
 using Gameplay.Characters.Enemy.FSM.States;
 using Gameplay.UI.Characters;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -18,7 +17,8 @@ namespace Gameplay.Characters.Enemy
     [RequireComponent(typeof(NavMeshAgent),  typeof(CapsuleCollider), typeof(Rigidbody))]
     public class EnemyAgent : MonoBehaviour, IDamage, IEnemyAgent, IEnemyContextSwitcher
     {
-        bool IDamage.IsAlive => _isAlive;
+        bool IEnemyAgent.IsTargetExist => _myTarget != null && _myTarget.IsAlive;
+        bool IDamage.IsHasHealth => _isAlive;
         public EnemyType Type => _type;
         float IEnemyAgent.AttackRange => _navAgent.radius * 4f;
         Vector3 IDamage.Position => _myTransform.position;
@@ -88,6 +88,7 @@ namespace Gameplay.Characters.Enemy
             _animatorProvider.PlayAlive();
 
             _entityUI.Show();
+            _entityUI.SetInfo(string.Empty);
             
             _collider.enabled = true;
                 
@@ -123,8 +124,8 @@ namespace Gameplay.Characters.Enemy
 
         public void StopHunt()
         {
-            _animatorProvider.SetSpeed(0f);
-            _currentState?.OnStop();
+            SwitchState<EnemyWaitState>();
+            _animatorProvider.SetSpeed(0f, true);
             _currentState = null;
             _navAgent.enabled = false;
         }
@@ -138,8 +139,9 @@ namespace Gameplay.Characters.Enemy
         
         void IEnemyAgent. PrepareForDie()
         {
-            _isAlive = false;
+            _animatorProvider.PlayDie();
             _entityUI.Hide();
+            _isAlive = false;
             _collider.enabled = false;
             StopHunt();
         }
@@ -208,14 +210,9 @@ namespace Gameplay.Characters.Enemy
             _currentState?.OnStop();
             _currentState = state;
             _currentState?.OnStart();
-
-            _entityUI.SetState(_currentState);
         }
 
         
-        public void OnUpdate()
-        {
-            _currentState?.OnUpdate();
-        }
+        public void OnUpdate() => _currentState?.OnUpdate();
     }
 }

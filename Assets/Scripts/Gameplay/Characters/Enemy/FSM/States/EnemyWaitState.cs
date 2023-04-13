@@ -8,7 +8,8 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
-            if (_agent.MyTarget != null && _agent.MyTarget.IsAlive) ChaseTarget();
+            _agent.Stop();
+            if (_agent.IsTargetExist) ChaseTarget();
         }
 
 

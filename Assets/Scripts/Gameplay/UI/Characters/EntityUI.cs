@@ -1,5 +1,3 @@
-using System;
-using Gameplay.Characters.Enemy.FSM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +8,7 @@ namespace Gameplay.UI.Characters
     {
         [SerializeField] private GameObject _rootElements;
         [SerializeField] private Image _hpBar;
-        [SerializeField] private TextMeshProUGUI _stateInfo;
+        [SerializeField] private TextMeshProUGUI _info;
 
 
         public void SetHP(float value)
@@ -19,10 +17,7 @@ namespace Gameplay.UI.Characters
         }
 
 
-        public void SetState(BaseEnemyState state)
-        {
-            _stateInfo.text = (state != null) ? $"{state}" : string.Empty;
-        }
+        public void SetInfo(string msg) => _info.text = $"{msg}";
         
 
         public void Show() => _rootElements.SetActive(true);

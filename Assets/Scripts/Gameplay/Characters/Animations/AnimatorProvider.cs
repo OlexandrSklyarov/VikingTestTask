@@ -18,8 +18,14 @@ namespace Gameplay.Characters.Animations
         private void OnAttack() => AttackEvent?.Invoke();
 
 
-        public void SetSpeed(float speed) =>
-            _animator.SetFloat(ConstPrm.Animation.MOVE_SPEED_PRM, speed, 0.1f, Time.deltaTime);
+        public void SetSpeed(float speed, bool isImmediately = false)
+        {
+            if (isImmediately)
+                _animator.SetFloat(ConstPrm.Animation.MOVE_SPEED_PRM, speed);
+            else
+                _animator.SetFloat(ConstPrm.Animation.MOVE_SPEED_PRM, speed, 0.1f, Time.deltaTime);
+        }
+            
 
 
         public void PlayAttack() => SetTrigger(ConstPrm.Animation.ATTACK);

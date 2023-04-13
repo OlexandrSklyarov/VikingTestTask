@@ -16,7 +16,8 @@ namespace Gameplay.Characters.Enemy.FSM
         AnimatorProvider AnimatorProvider { get; }
         AttackProvider AttackProvider { get; }
         float AttackRange { get; }
-        
+        bool IsTargetExist { get; }
+
         event Action OnStunnedEvent;
 
         void Die();

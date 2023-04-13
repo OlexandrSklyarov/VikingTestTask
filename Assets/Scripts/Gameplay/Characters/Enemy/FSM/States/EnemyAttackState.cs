@@ -17,7 +17,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
             _agent.OnStunnedEvent += Stun;
             _agent.AnimatorProvider.AttackEvent += OnAttackExecuteHandler;
 
-            if (IsTargetNotExist() || _agent.AnimatorProvider.IsPlayDamage()) Wait();
+            if (!_agent.IsTargetExist || _agent.AnimatorProvider.IsPlayDamage()) Wait();
         }
         
 
@@ -54,13 +54,8 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         private bool IsTargetNotExistOrFar()
         {
-            return IsTargetNotExist() ||
+            return !_agent.IsTargetExist ||
                    (IsTargetFar() && !_agent.AnimatorProvider.IsPlayAttack());
-        }
-
-        private bool IsTargetNotExist()
-        {
-            return _agent.MyTarget == null || !_agent.MyTarget.IsAlive;
         }
 
 

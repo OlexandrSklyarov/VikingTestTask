@@ -27,7 +27,7 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnUpdate()
         {
-            if (!IsExist())
+            if (!_agent.IsTargetExist)
             {
                 Wait();
                 return;
@@ -40,12 +40,6 @@ namespace Gameplay.Characters.Enemy.FSM.States
             }
             
             MoveToTarget();
-        }
-
-        
-        private bool IsExist()
-        {
-            return _agent.MyTarget != null && _agent.MyTarget.IsAlive;
         }
 
 

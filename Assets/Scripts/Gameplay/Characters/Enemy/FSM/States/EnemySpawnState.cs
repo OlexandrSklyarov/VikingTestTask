@@ -10,6 +10,8 @@ namespace Gameplay.Characters.Enemy.FSM.States
 
         public override void OnStart()
         {
+            _agent.Stop();
+            
             RoutineManager.RunWithDelay
             (
                 () => _context.SwitchState<EnemyWaitState>(),

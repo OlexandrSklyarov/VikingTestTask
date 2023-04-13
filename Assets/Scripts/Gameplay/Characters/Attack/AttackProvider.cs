@@ -61,7 +61,7 @@ namespace Gameplay.Characters.Attack
                 .Take(count)
                 .Where(c => c != null)
                 .Select(c => c.GetComponent<IDamage>())
-                .Where(c => c != null && c.IsAlive)
+                .Where(c => c != null && c.IsHasHealth)
                 .OrderBy(c => (c.Position - pos).sqrMagnitude)
                 .OrderBy(c => Vector3.Angle(lookDirection, c.Position - pos));
 
