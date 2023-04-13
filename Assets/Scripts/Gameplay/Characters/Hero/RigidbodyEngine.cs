@@ -64,8 +64,9 @@ namespace Gameplay.Characters.Hero
         
         private void MoveBody()
         {
-            var moveDirection = _orientation.forward * _inputDirection.y + _orientation.right * _inputDirection.x;
-            _rb.AddForce(moveDirection.normalized * _config.Speed * _config.SpeedMultiplier, ForceMode.Force);
+            var viewDir = _orientation.forward * _inputDirection.y + _orientation.right * _inputDirection.x;
+           var moveDirection = new Vector3(viewDir.x, 0f, viewDir.z).normalized;
+            _rb.AddForce(moveDirection * _config.Speed * _config.SpeedMultiplier, ForceMode.Force);
         }
     }
 }
