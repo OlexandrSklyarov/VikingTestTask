@@ -14,7 +14,6 @@ namespace Gameplay.Characters.Hero
         private readonly Transform _orientation;
 
         private Vector3 _inputDirection;
-        private Vector3 _smoothVelocity;
         private bool _isGrounded;
 
 
@@ -55,17 +54,17 @@ namespace Gameplay.Characters.Hero
 
         private void GroundCheckProcess()
         {
-             _isGrounded = Physics.Raycast(_myTransform.position, Vector3.down, 
+            _isGrounded = Physics.Raycast(_myTransform.position, Vector3.down, 
                  _config.GroundCheckDistance, _config.GroundLayerMask);
             
-             _rb.drag = (_isGrounded) ? _config.GroundDrag : 0f;
+            _rb.drag = (_isGrounded) ? _config.GroundDrag : 0f;
         }
 
         
         private void MoveBody()
         {
             var viewDir = _orientation.forward * _inputDirection.y + _orientation.right * _inputDirection.x;
-           var moveDirection = new Vector3(viewDir.x, 0f, viewDir.z).normalized;
+            var moveDirection = new Vector3(viewDir.x, 0f, viewDir.z).normalized;
             _rb.AddForce(moveDirection * _config.Speed * _config.SpeedMultiplier, ForceMode.Force);
         }
     }
